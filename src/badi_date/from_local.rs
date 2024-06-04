@@ -6,6 +6,7 @@ use crate::{statics::*, BadiDate, BadiDateError, BadiMonth, Coordinates};
 use super::util::*;
 
 pub trait FromLocal {
+    // Create a new BadiDate given a local time-zoned date and coordinates
     fn from_local(
         date: DateTime<Tz>,
         coordinates: Option<Coordinates>,
@@ -33,14 +34,18 @@ impl FromLocal for BadiDate {
         let day_of_year_0 = (last_sunset.date_naive() - last_naw_ruz.date_naive()).num_days();
         let day_of_year_1 = day_of_year_0 + 1;
         let ayyamiha_days = get_number_of_ayyamiha_days(year) as i64;
-        let (day, month, year) = if day_of_year_1 < 342 {
+        let (day, month, year) = if day_of_year_1 < AYYAMIHA_DAY_1 {
             let month = (day_of_year_0 / 19 + 1) as u8;
             let day = (day_of_year_0 % 19 + 1) as u8;
             (day, BadiMonth::Month(month), year)
-        } else if day_of_year_1 < 342 + ayyamiha_days {
-            ((day_of_year_1 - 341) as u8, BadiMonth::AyyamIHa, year)
+        } else if day_of_year_1 < AYYAMIHA_DAY_1 + ayyamiha_days {
+            (
+                (day_of_year_1 - AYYAMIHA_DAY_0) as u8,
+                BadiMonth::AyyamIHa,
+                year,
+            )
         } else {
-            let day = (day_of_year_1 - (342 + ayyamiha_days)) as u8;
+            let day = (day_of_year_1 - (AYYAMIHA_DAY_1 + ayyamiha_days)) as u8;
             (day, BadiMonth::Month(19), year)
         };
         Ok(Self {
@@ -56,21 +61,13 @@ impl FromLocal for BadiDate {
 
 #[cfg(test)]
 mod tests {
-    use chrono::{DateTime, NaiveDate, TimeZone};
+    use chrono::{DateTime, TimeZone};
     use chrono_tz::Tz;
 
-    use crate::Gregorian;
-
-    use super::*;
+    use crate::{BadiDate, BadiMonth, Coordinates, FromLocal, ToGregorian};
 
     #[test]
     fn badi_date_from_local() {
-        let date1 = NaiveDate::from_ymd_opt(2023, 3, 20).unwrap();
-        let date2 = NaiveDate::from_ymd_opt(2022, 3, 20).unwrap();
-        let days = (date1 - date2).num_days();
-        println!("NUM DAYS: {}", days);
-        // println!("days since March 20: {}", (date2 - date1).num_days());
-
         let denver: Tz = "America/Denver".parse().unwrap();
         let coords = Some(Coordinates::new(39.613319, -105.016647).unwrap());
         let test_dates: Vec<(String, DateTime<Tz>, BadiDate)> = vec![

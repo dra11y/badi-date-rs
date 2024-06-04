@@ -1,9 +1,10 @@
-use chrono::{DateTime, Datelike, Days, NaiveTime, TimeZone};
+use chrono::{DateTime, Datelike, Days, TimeZone};
 use chrono_tz::Tz;
 use now::DateTimeNow;
 
 use crate::{statics::*, BadiMonth, Coordinates};
 
+/// Computes the sunset time of the current Badi year exactly at or before the given local datetime.
 pub(crate) fn get_sunset_of_last_naw_ruz(
     coordinates: &Option<Coordinates>,
     date: DateTime<Tz>,
@@ -33,6 +34,7 @@ pub(crate) fn get_sunset_of_last_naw_ruz(
     }
 }
 
+// Computes the number of days in Ayyám-i-Há of the given Badi (B.E.) year
 pub(crate) fn get_number_of_ayyamiha_days(year: u8) -> u8 {
     let specifics = YEAR_SPECIFICS.get(&year);
     if let Some(specifics) = specifics {
@@ -52,10 +54,10 @@ pub(crate) fn get_number_of_ayyamiha_days(year: u8) -> u8 {
     }
 }
 
+/// Computes the sunset occuring on the date of the passed local DateTime
+/// Passing `coordinates` as `None` will return `START_OF_DAY_FALLBACK` in `Tz` timezone
 pub(crate) fn get_sunset(coordinates: &Option<Coordinates>, date: DateTime<Tz>) -> DateTime<Tz> {
-    let fallback = date
-        .with_time(NaiveTime::from_hms_opt(18, 0, 0).unwrap())
-        .unwrap();
+    let fallback = date.with_time(*START_OF_DAY_FALLBACK).unwrap();
     let Some(coordinates) = coordinates else {
         return fallback;
     };
@@ -75,7 +77,7 @@ pub(crate) fn get_sunset(coordinates: &Option<Coordinates>, date: DateTime<Tz>) 
     )
 }
 
-#[allow(dead_code)]
+// Computes the next sunset exactly at or after the passed local DateTime
 pub(crate) fn get_next_sunset(
     coordinates: &Option<Coordinates>,
     date: DateTime<Tz>,
@@ -87,6 +89,7 @@ pub(crate) fn get_next_sunset(
     sunset
 }
 
+/// Computes the previous sunset before the passed local DateTime
 pub(crate) fn get_last_sunset(
     coordinates: &Option<Coordinates>,
     date: DateTime<Tz>,
@@ -98,6 +101,7 @@ pub(crate) fn get_last_sunset(
     sunset
 }
 
+// Computes the absolute 1-based day of the year given Badi year/month/day
 pub(crate) fn day_of_year(year: u8, month: &BadiMonth, day: u8) -> u64 {
     match *month {
         BadiMonth::Month(month) => {
@@ -105,9 +109,9 @@ pub(crate) fn day_of_year(year: u8, month: &BadiMonth, day: u8) -> u64 {
                 19 * (month - 1) as u64 + day as u64
             } else {
                 let ayyamiha_days = get_number_of_ayyamiha_days(year);
-                342 as u64 + ayyamiha_days as u64 + day as u64
+                AYYAMIHA_DAY_1 as u64 + ayyamiha_days as u64 + day as u64
             }
         }
-        BadiMonth::AyyamIHa => 342 as u64 + day as u64,
+        BadiMonth::AyyamIHa => AYYAMIHA_DAY_1 as u64 + day as u64,
     }
 }

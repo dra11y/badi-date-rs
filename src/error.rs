@@ -1,10 +1,10 @@
 use std::fmt::Display;
 
-use crate::LAST_YEAR_SUPPORTED;
+use crate::{BadiMonth, LAST_YEAR_SUPPORTED};
 
 #[derive(Debug)]
 pub enum BadiDateError {
-    DayInvalid,
+    DayInvalid(u8, BadiMonth),
     MonthInvalid,
     YearInvalid,
     DateNotSupported,
@@ -13,8 +13,17 @@ pub enum BadiDateError {
 impl BadiDateError {
     pub fn message(&self) -> String {
         match self {
-            BadiDateError::DayInvalid => "Day must be in the range [1-19]".to_string(),
-            BadiDateError::MonthInvalid => "Month must be in the range [1-19]".to_string(),
+            BadiDateError::DayInvalid(max, month) => {
+                format!(
+                    "Day must be in the range [1-{}] for {}",
+                    max,
+                    month.description()
+                )
+            }
+            BadiDateError::MonthInvalid => {
+                "Month must be BadiMonth::AyyamIHa or BadiMonth::Month(month) in the range [1-19]"
+                    .to_string()
+            }
             BadiDateError::YearInvalid => {
                 format!("Year must be in the range [1-{}]", LAST_YEAR_SUPPORTED)
             }

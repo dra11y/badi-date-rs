@@ -1,4 +1,5 @@
 #[derive(Clone, Copy, Debug, PartialEq)]
+// WGS-84 GPS coordinates used to calculate sunset times
 pub struct Coordinates {
     pub latitude: f64,
     pub longitude: f64,
@@ -24,6 +25,8 @@ impl CoordinatesError {
 }
 
 impl Coordinates {
+    /// Create a new set of WGS-84 GPS coordinates used in calculating sunset times
+    /// (ensure these match the time zone being used!)
     pub fn new(latitude: f64, longitude: f64) -> Result<Self, CoordinatesError> {
         Ok(Self {
             latitude,

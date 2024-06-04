@@ -1,0 +1,104 @@
+# _version must be 2:
+# - https://github.com/longbridgeapp/rust-i18n/issues/60
+# - https://github.com/longbridgeapp/rust-i18n/issues/81
+_version: 2
+ayyamiha:
+  en: The Days of Há
+  ar: ايام الهاء
+  tl: Ayyám-i-Há
+  extra: intercalary days
+month.1:
+  en: Splendour
+  ar: بهاء
+  tl: Bahá
+  extra: glory, light, excellence
+month.2:
+  en: Glory
+  ar: جلال
+  tl: Jalál
+  extra: majesty
+month.3: 
+  en: Beauty
+  ar: جمال
+  tl: Jamál
+  extra: charm
+month.4:
+  en: Grandeur
+  ar: عظمة
+  tl: ʻAẓamat
+  extra: glory, majesty, dominion, greatness
+month.5:
+  en: Light
+  ar: نور
+  tl: Núr
+  extra: radiance, brightness, splendour, effulgence, illumination
+month.6:
+  en: Mercy
+  ar: رحمة
+  tl: Raḥmat
+  extra: blessing, grace, favour, loving kindness, providence, compassion
+month.7:
+  en: Words
+  ar: كلمات
+  tl: Kalimát
+  extra: utterance, the word of God
+month.8:
+  en: Perfection
+  ar: كمال
+  tl: Kamál
+  extra: excellence, fullness, consummation, maturity
+month.9:
+  en: Names
+  ar: اسماء
+  tl: Asmáʼ
+  extra: titles, attributes, designations
+month.10:
+  en: Might
+  ar: عزة
+  tl: ʻIzzat
+  extra: glory, power, exaltation, honour, majesty, grandeur, strength, sovereignty, magnificence
+month.11:
+  en: Will
+  ar: مشية
+  tl: Mas͟híyyat
+  extra: purpose, the primal will, the will of God
+month.12:
+  en: Knowledge
+  ar: علم
+  tl: ʻIlm
+  extra: wisdom, divine knowledge, revelation
+month.13:
+  en: Power
+  ar: قدرة
+  tl: Qudrat
+  extra: might, authority, dominion, celestial might, omnipotence, transcendent power, indomitable strength, all-pervading power, ascendancy, divine power
+month.14:
+  en: Speech
+  ar: قول
+  tl: Qawl
+  extra: words, testimony
+month.15:
+  en: Questions
+  ar: مسائل
+  tl: Masáʼil
+  extra: principles, truths, matters, mysteries, subtleties, obscurities, intricacies, problems
+month.16:
+  en: Honour
+  ar: شرف
+  tl: S͟haraf
+  extra: excellence, glory
+month.17:
+  en: Sovereignty
+  ar: سلطان
+  tl: Sulṭán
+  extra: king, lord, majesty, sovereign, monarch, authority, potency, the power of sovereignty, the all-possessing, the most potent of rulers
+month.18:
+  en: Dominion
+  ar: ملك
+  tl: Mulk
+  extra: sovereignty, kingdom, realm, universe
+month.19:
+  en: Loftiness
+  ar: علاء
+  tl: ʻAláʼ
+  extra: glory

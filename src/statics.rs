@@ -1,13 +1,16 @@
 use std::collections::HashMap;
 
-use chrono::{DateTime, TimeZone};
+use chrono::{DateTime, NaiveTime, TimeZone};
 use chrono_tz::{Asia::Tehran, Tz};
 use lazy_static::lazy_static;
 
-pub(crate) const LAST_YEAR_SUPPORTED: u8 = 221;
-pub(crate) const LAST_GREGORIAN_YEAR_SUPPORTED: i32 = 2065;
 pub(crate) const YEAR_ONE_IN_GREGORIAN: i32 = 1844;
 pub(crate) const YEAR_ZERO_IN_GREGORIAN: i32 = YEAR_ONE_IN_GREGORIAN - 1;
+pub(crate) const LAST_YEAR_SUPPORTED: u8 = 221;
+pub(crate) const LAST_GREGORIAN_YEAR_SUPPORTED: i32 =
+    YEAR_ONE_IN_GREGORIAN + LAST_YEAR_SUPPORTED as i32;
+pub(crate) const AYYAMIHA_DAY_1: i64 = 342;
+pub(crate) const AYYAMIHA_DAY_0: i64 = AYYAMIHA_DAY_1 - 1;
 
 #[derive(Debug)]
 pub(crate) struct YearSpecifics {
@@ -28,6 +31,8 @@ impl YearSpecifics {
 }
 
 lazy_static! {
+    pub(crate) static ref START_OF_DAY_FALLBACK: NaiveTime =
+        NaiveTime::from_hms_opt(18, 0, 0).unwrap();
     pub(crate) static ref YEAR_SPECIFICS: HashMap<u8, YearSpecifics> = {
         let mut map = HashMap::new();
         map.insert(172, YearSpecifics::new(238, false, true));
