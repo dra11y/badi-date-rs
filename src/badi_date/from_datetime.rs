@@ -5,15 +5,16 @@ use crate::{statics::*, BadiDate, BadiDateError, BadiMonth, Coordinates};
 
 use super::util::*;
 
-pub trait FromLocal {
-    // Create a new BadiDate given a local time-zoned date and coordinates
+/// Provides methods to create a [`BadiDate`] from a Gregorian [`DateTime`]
+pub trait FromDateTime {
+    /// Create a new BadiDate given a local time-zoned date and coordinates
     fn from_local(
         date: DateTime<Tz>,
         coordinates: Option<Coordinates>,
     ) -> Result<BadiDate, BadiDateError>;
 }
 
-impl FromLocal for BadiDate {
+impl FromDateTime for BadiDate {
     // Bahá’í Calendar 2024: https://www.bahai.org/action/devotional-life/calendar/pdf-calendar
     // https://www.bahai.org/action/devotional-life/calendar
     // adapted from https://github.com/Soroosh/badi_date/blob/main/lib/badi_date.dart
@@ -34,28 +35,21 @@ impl FromLocal for BadiDate {
         let day_of_year_0 = (last_sunset.date_naive() - last_naw_ruz.date_naive()).num_days();
         let day_of_year_1 = day_of_year_0 + 1;
         let ayyamiha_days = get_number_of_ayyamiha_days(year) as i64;
-        let (day, month, year) = if day_of_year_1 < AYYAMIHA_DAY_1 {
+        let (year, month, day) = if day_of_year_1 < AYYAMIHA_DAY_1 {
             let month = (day_of_year_0 / 19 + 1) as u8;
-            let day = (day_of_year_0 % 19 + 1) as u8;
-            (day, BadiMonth::Month(month), year)
+            let day = (day_of_year_0 % 19 + 1) as u16;
+            (year, BadiMonth::Month(month), day)
         } else if day_of_year_1 < AYYAMIHA_DAY_1 + ayyamiha_days {
             (
-                (day_of_year_1 - AYYAMIHA_DAY_0) as u8,
-                BadiMonth::AyyamIHa,
                 year,
+                BadiMonth::AyyamIHa,
+                (day_of_year_1 - AYYAMIHA_DAY_0) as u16,
             )
         } else {
-            let day = (day_of_year_1 - (AYYAMIHA_DAY_1 + ayyamiha_days)) as u8;
-            (day, BadiMonth::Month(19), year)
+            let day: u16 = (day_of_year_1 - (AYYAMIHA_DAY_1 + ayyamiha_days)) as u16;
+            (year, BadiMonth::Month(19), day)
         };
-        Ok(Self {
-            day,
-            month,
-            year,
-            coordinates,
-            timezone: Some(date.timezone()),
-            day_of_year: day_of_year_1 as u64,
-        })
+        Self::new(year, month, day, date.timezone(), coordinates)
     }
 }
 
@@ -64,7 +58,7 @@ mod tests {
     use chrono::{DateTime, TimeZone};
     use chrono_tz::Tz;
 
-    use crate::{BadiDate, BadiMonth, Coordinates, FromLocal, ToGregorian};
+    use crate::{BadiDate, BadiMonth, Coordinates, FromDateTime, ToDateTime};
 
     #[test]
     fn badi_date_from_local() {
@@ -74,74 +68,72 @@ mod tests {
             (
                 "2024 Naw Ruz before sunset".to_string(),
                 denver.with_ymd_and_hms(2024, 3, 19, 12, 0, 0).unwrap(),
-                BadiDate::new(19, BadiMonth::Month(19), 180, coords, Some(denver)).unwrap(),
+                BadiDate::new(180, BadiMonth::Month(19), 19, denver, coords).unwrap(),
             ),
             (
                 "2024 Naw Ruz after sunset".to_string(),
                 denver.with_ymd_and_hms(2024, 3, 19, 20, 0, 0).unwrap(),
-                BadiDate::new(1, BadiMonth::Month(1), 181, coords, Some(denver)).unwrap(),
+                BadiDate::new(181, BadiMonth::Month(1), 1, denver, coords).unwrap(),
             ),
             (
                 "2024 day after Naw Ruz before sunset".to_string(),
                 denver.with_ymd_and_hms(2024, 3, 20, 0, 0, 0).unwrap(),
-                // denver.with_ymd_and_hms(2024, 3, 20, 23, 59, 59).unwrap(),
-                // denver.with_ymd_and_hms(2024, 3, 21, 0, 0, 0).unwrap(),
-                BadiDate::new(1, BadiMonth::Month(1), 181, coords, Some(denver)).unwrap(),
+                BadiDate::new(181, BadiMonth::Month(1), 1, denver, coords).unwrap(),
             ),
             (
                 "2024 day after Naw Ruz after sunset".to_string(),
                 denver.with_ymd_and_hms(2024, 3, 20, 20, 0, 0).unwrap(),
-                BadiDate::new(2, BadiMonth::Month(1), 181, coords, Some(denver)).unwrap(),
+                BadiDate::new(181, BadiMonth::Month(1), 2, denver, coords).unwrap(),
             ),
             (
                 "2024 Jalal before sunset".to_string(),
                 denver.with_ymd_and_hms(2024, 4, 7, 10, 32, 0).unwrap(),
-                BadiDate::new(19, BadiMonth::Month(1), 181, coords, Some(denver)).unwrap(),
+                BadiDate::new(181, BadiMonth::Month(1), 19, denver, coords).unwrap(),
             ),
             (
                 "2024 Jalal after sunset".to_string(),
                 denver.with_ymd_and_hms(2024, 4, 7, 19, 32, 0).unwrap(),
-                BadiDate::new(1, BadiMonth::Month(2), 181, coords, Some(denver)).unwrap(),
+                BadiDate::new(181, BadiMonth::Month(2), 1, denver, coords).unwrap(),
             ),
             (
                 "Feast of ‘Izzat (Might) 181 B.E. before sunset".to_string(),
                 denver.with_ymd_and_hms(2024, 9, 6, 10, 24, 0).unwrap(),
-                BadiDate::new(19, BadiMonth::Month(9), 181, coords, Some(denver)).unwrap(),
+                BadiDate::new(181, BadiMonth::Month(9), 19, denver, coords).unwrap(),
             ),
             (
                 "Feast of ‘Izzat (Might) 181 B.E. after sunset".to_string(),
                 denver.with_ymd_and_hms(2024, 9, 6, 19, 24, 0).unwrap(),
-                BadiDate::new(1, BadiMonth::Month(10), 181, coords, Some(denver)).unwrap(),
+                BadiDate::new(181, BadiMonth::Month(10), 1, denver, coords).unwrap(),
             ),
             (
                 "Feast of ‘Izzat (Might) 181 B.E. after midnight".to_string(),
                 denver.with_ymd_and_hms(2024, 9, 7, 0, 0, 0).unwrap(),
-                BadiDate::new(1, BadiMonth::Month(10), 181, coords, Some(denver)).unwrap(),
+                BadiDate::new(181, BadiMonth::Month(10), 1, denver, coords).unwrap(),
             ),
             (
                 "Feast of Sharaf (Honour) 181 B.E. before sunset".to_string(),
                 denver.with_ymd_and_hms(2024, 12, 29, 15, 45, 0).unwrap(),
-                BadiDate::new(19, BadiMonth::Month(15), 181, coords, Some(denver)).unwrap(),
+                BadiDate::new(181, BadiMonth::Month(15), 19, denver, coords).unwrap(),
             ),
             (
                 "Feast of Sharaf (Honour) 181 B.E.".to_string(),
                 denver.with_ymd_and_hms(2024, 12, 29, 16, 46, 0).unwrap(),
-                BadiDate::new(1, BadiMonth::Month(16), 181, coords, Some(denver)).unwrap(),
+                BadiDate::new(181, BadiMonth::Month(16), 1, denver, coords).unwrap(),
             ),
             (
                 "some day".to_string(),
                 denver.with_ymd_and_hms(2024, 6, 4, 0, 15, 0).unwrap(),
-                BadiDate::new(1, BadiMonth::Month(5), 181, coords, Some(denver)).unwrap(),
+                BadiDate::new(181, BadiMonth::Month(5), 1, denver, coords).unwrap(),
             ),
             (
                 "Feast of Jalál (Glory) 182 B.E.".to_string(),
                 denver.with_ymd_and_hms(2025, 4, 7, 19, 30, 0).unwrap(),
-                BadiDate::new(1, BadiMonth::Month(2), 182, coords, Some(denver)).unwrap(),
+                BadiDate::new(182, BadiMonth::Month(2), 1, denver, coords).unwrap(),
             ),
             (
                 "Feast day".to_string(),
                 denver.with_ymd_and_hms(2024, 6, 3, 20, 30, 0).unwrap(),
-                BadiDate::new(1, BadiMonth::Month(5), 181, coords, Some(denver)).unwrap(),
+                BadiDate::new(181, BadiMonth::Month(5), 1, denver, coords).unwrap(),
             ),
         ];
 

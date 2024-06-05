@@ -8,6 +8,13 @@ A Rust crate that provides types and conversions between the Gregorian and Badi 
 
 This crate is a work-in-progress and seems to be working correctly with initial tests. Edge cases have not been tested yet.
 
+- 0.2.0
+  - BREAKING CHANGES:
+    - parameters order: BadiDate::new(year, month, day, timezone, coordinates)
+    - parameter types (day: u16, year: u8)
+  - rename `ToGregorian` and `FromLocal` traits to `ToDateTime` and `FromDateTime`
+  - fix documentation so it shows up in docs.rs
+
 - 0.1.0 (initial release)
   - `BadiDate` and `BadiMonth` types
   - Creation of `BadiDate`s via `BadiDate::new`
@@ -17,7 +24,7 @@ This crate is a work-in-progress and seems to be working correctly with initial 
 ## Installation
 
 ```
-cargo add badi-date@0.1
+cargo add badi-date@0.2
 ```
 
 ## Usage
@@ -27,7 +34,7 @@ cargo add badi-date@0.1
 ```bash
 cargo new test_badi_date
 cd test_badi_date
-cargo add badi_date@0.1
+cargo add badi_date@0.2
 cargo add chrono@0.4
 cargo add chrono-tz@0.9
 cargo add now@0.1
@@ -35,7 +42,7 @@ cargo add now@0.1
 
 `main.rs`
 ```rust
-use badi_date::{BadiDate, BadiMonth, Coordinates, FromLocal, ToGregorian};
+use badi_date::{BadiDate, BadiMonth, Coordinates, FromDateTime, ToDateTime};
 use chrono::TimeZone;
 use chrono_tz::Tz;
 use now::TimeZoneNow;
@@ -115,7 +122,7 @@ badi_day = day_of_badi_year - (342 + number_of_days_in_ayyamiha)
 
 > “The Festival of Naw-Rúz falleth on the day that the sun entereth the sign of Aries, even should this occur no more than one minute before sunset.” – Bahá’u’lláh
 
-Naw-Rúz falls on the date the vernal (spring) equinox occurs between sunrise and sunset in Ṭihrán, Iran (the birthplace of Bahá’u’lláh). Due to the Gregorian calendar not being a true solar calendar, Naw-Rúz shifts between 20 and 21 March each year.
+Naw-Rúz falls on the date the vernal equinox occurs between sunrise and sunset in Ṭihrán, Iran (the birthplace of Bahá’u’lláh). Due to the Gregorian calendar not being a true solar calendar, Naw-Rúz shifts between 20 and 21 March each year.
 
 > “The adoption of a new calendar in each dispensation is a symbol of the power of Divine Revelation to reshape human perception of material, social, and spiritual reality. Through it, sacred moments are distinguished, humanity’s place in time and space reimagined, and the rhythm of life recast.” — <cite>[The Universal House of Justice, 10 July 2014](https://www.bahai.org/library/authoritative-texts/the-universal-house-of-justice/messages/20140710_001/1)</cite>
 
@@ -126,7 +133,7 @@ Thanks to the following authors for their work that inspired / contributed to th
 | Language      | Package       | Author       |
 | ------------- | ------------- | ------------ |
 | JavaScript / TypeScript | [badidate](https://github.com/janrg/badiDate) | @janrg |
-| Dart | [badi_date](https://github.com/Soroosh/badi_date) | @Soroosh |
+| Dart / Flutter | [badi_date](https://github.com/Soroosh/badi_date) | @Soroosh |
 
 ### Links
 

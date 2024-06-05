@@ -1,4 +1,4 @@
-use badi_date::{BadiDate, BadiMonth, Coordinates, FromLocal, ToGregorian};
+use badi_date::{BadiDate, BadiMonth, Coordinates, FromDateTime, ToDateTime};
 use chrono::TimeZone;
 use chrono_tz::Tz;
 use now::TimeZoneNow;
@@ -13,7 +13,7 @@ fn main() {
     let date = denver.with_ymd_and_hms(2024, 3, 19, 18, 0, 0).unwrap();
     let badi_date = BadiDate::from_local(date, coords).unwrap();
     assert_eq!(
-        BadiDate::new(19, BadiMonth::Month(19), 180, coords, Some(denver)).unwrap(),
+        BadiDate::new(180, BadiMonth::Month(19), 19, denver, coords).unwrap(),
         badi_date,
     );
     println!("date: {:?}\nbadi_date: {:?}", date, badi_date);
@@ -33,7 +33,7 @@ fn main() {
     // Test fallback conversion (no coordinates)
     let badi_fallback = BadiDate::from_local(date, None).unwrap();
     assert_eq!(
-        BadiDate::new(1, BadiMonth::Month(1), 181, None, Some(denver)).unwrap(),
+        BadiDate::new(181, BadiMonth::Month(1), 1, denver, None).unwrap(),
         badi_fallback,
     );
     println!("date: {:?}\nbadi_fallback: {:?}", date, badi_fallback);

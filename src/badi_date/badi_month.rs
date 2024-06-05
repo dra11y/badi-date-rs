@@ -1,27 +1,30 @@
 use rust_i18n::t;
 
+use crate::BadiDateError;
+
 use super::util::*;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
+/// Represents one of the 19 Bahá’í months or Ayyám-i-Há
 pub enum BadiMonth {
-    // One of the 19 Badi/Bahá’í months (parameter is 1-based month number)
+    /// One of the 19 Badi/Bahá’í months (parameter is 1-based month number)
     Month(u8),
-    // The intercalary days of Ayyám-i-Há
+    /// The intercalary days of Ayyám-i-Há
     AyyamIHa,
 }
 
 impl BadiMonth {
-    // First month of the year (Bahá)
+    /// First month of the year (Bahá)
     pub fn first() -> Self {
         BadiMonth::Month(1)
     }
 
-    // Last month of the year (ʻAláʼ)
+    /// Last month of the year (ʻAláʼ)
     pub fn last() -> Self {
         BadiMonth::Month(19)
     }
 
-    // Next month of the year (None if `self` is ʻAláʼ)
+    /// Next month of the year (None if `self` is ʻAláʼ)
     pub fn next(&self) -> Option<Self> {
         match *self {
             BadiMonth::Month(month) => {
@@ -37,7 +40,7 @@ impl BadiMonth {
         }
     }
 
-    // Previous month of the year (None if `self` is Bahá)
+    /// Previous month of the year (None if `self` is Bahá)
     pub fn previous(&self) -> Option<Self> {
         match *self {
             BadiMonth::Month(month) => {
@@ -55,48 +58,51 @@ impl BadiMonth {
         }
     }
 
-    // Whether the month is valid
-    pub fn valid(&self) -> bool {
-        match *self {
+    /// Return `self` if month is valid, otherwise [`BadiDateError::MonthInvalid`]
+    pub fn validate(&self) -> Result<Self, BadiDateError> {
+        if match *self {
             BadiMonth::Month(month) => month >= 1 && month <= 19,
             BadiMonth::AyyamIHa => true,
+        } {
+            return Ok(*self);
         }
+        Err(BadiDateError::MonthInvalid(*self))
     }
 
-    // Max number of days in the month (year required to compute Ayyám-i-Há days)
-    pub fn number_of_days(&self, year: u8) -> u8 {
+    /// Max number of days in the month (year required to compute Ayyám-i-Há days)
+    pub fn number_of_days(&self, year: u8) -> u16 {
         match *self {
             BadiMonth::Month(_) => 19,
             BadiMonth::AyyamIHa => get_number_of_ayyamiha_days(year),
         }
     }
 
-    // Arabic name of the month in the Arabic charater set
+    /// Arabic name of the month in the Arabic charater set
     pub fn arabic(&self) -> String {
         self.name("ar")
     }
 
-    // English name of the month (as opposed to transliteration)
+    /// English name of the month (as opposed to transliteration)
     pub fn english(&self) -> String {
         self.name("en")
     }
 
-    // English transliteration of Arabic name of the month
+    /// English transliteration of Arabic name of the month
     pub fn transliteration(&self) -> String {
         self.name("tl")
     }
 
-    // Additional meanings in authorized English translations of Baháʼí scripture
-    // https://en.wikipedia.org/wiki/Bah%C3%A1%CA%BC%C3%AD_calendar
+    /// Additional meanings in authorized English translations of Baháʼí scripture
+    /// <https://en.wikipedia.org/wiki/Bah%C3%A1%CA%BC%C3%AD_calendar>
     pub fn additional_meanings(&self) -> String {
         self.name("extra")
     }
 
-    // Get name of the month in a locale (see /locales/app.yaml):
-    // en: English
-    // ar: Arabic
-    // tl: English transliteration
-    // extra: Additional meanings (English)
+    /// Get name of the month in a locale (see /locales/app.yaml):
+    /// en: English
+    /// ar: Arabic
+    /// tl: English transliteration
+    /// extra: Additional meanings (English)
     pub fn name(&self, locale: &str) -> String {
         match self {
             BadiMonth::Month(month) => {
@@ -106,7 +112,7 @@ impl BadiMonth {
         }
     }
 
-    // Get a (debug) description of the month
+    /// Get a (debug) description of the month
     pub fn description(&self) -> String {
         match self {
             BadiMonth::Month(_) => format!("the month of {}", self.name("tl")),

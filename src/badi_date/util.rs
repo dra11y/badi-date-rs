@@ -2,7 +2,23 @@ use chrono::{DateTime, Datelike, Days, TimeZone};
 use chrono_tz::Tz;
 use now::DateTimeNow;
 
-use crate::{statics::*, BadiMonth, Coordinates};
+use crate::{statics::*, BadiDateError, BadiMonth, Coordinates};
+
+/// Validate a Badi year, month, and day
+pub(crate) fn validate(year: u8, month: BadiMonth, day: u16) -> Result<(), BadiDateError> {
+    if year < 1 || year > LAST_YEAR_SUPPORTED {
+        return Err(BadiDateError::DateNotSupported);
+    }
+    if let Err(err) = month.validate() {
+        return Err(err);
+    }
+    let max_day = month.number_of_days(year);
+    if day < 1 || day > max_day {
+        let err = BadiDateError::DayInvalid(month, day, max_day);
+        return Err(err);
+    }
+    Ok(())
+}
 
 /// Computes the sunset time of the current Badi year exactly at or before the given local datetime.
 pub(crate) fn get_sunset_of_last_naw_ruz(
@@ -35,7 +51,7 @@ pub(crate) fn get_sunset_of_last_naw_ruz(
 }
 
 // Computes the number of days in Ayyám-i-Há of the given Badi (B.E.) year
-pub(crate) fn get_number_of_ayyamiha_days(year: u8) -> u8 {
+pub(crate) fn get_number_of_ayyamiha_days(year: u8) -> u16 {
     let specifics = YEAR_SPECIFICS.get(&year);
     if let Some(specifics) = specifics {
         if specifics.leapday {
@@ -102,16 +118,16 @@ pub(crate) fn get_last_sunset(
 }
 
 // Computes the absolute 1-based day of the year given Badi year/month/day
-pub(crate) fn day_of_year(year: u8, month: &BadiMonth, day: u8) -> u64 {
+pub(crate) fn day_of_year(year: u8, month: &BadiMonth, day: u16) -> u16 {
     match *month {
         BadiMonth::Month(month) => {
             if month < 19 {
-                19 * (month - 1) as u64 + day as u64
+                19 * (month - 1) as u16 + day as u16
             } else {
                 let ayyamiha_days = get_number_of_ayyamiha_days(year);
-                AYYAMIHA_DAY_1 as u64 + ayyamiha_days as u64 + day as u64
+                AYYAMIHA_DAY_1 as u16 + ayyamiha_days as u16 + day as u16
             }
         }
-        BadiMonth::AyyamIHa => AYYAMIHA_DAY_1 as u64 + day as u64,
+        BadiMonth::AyyamIHa => AYYAMIHA_DAY_1 as u16 + day as u16,
     }
 }

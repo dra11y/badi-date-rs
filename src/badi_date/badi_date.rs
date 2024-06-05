@@ -1,52 +1,92 @@
 use chrono_tz::Tz;
 
 use super::util::*;
-use crate::{BadiDateError, BadiMonth, Coordinates, LAST_YEAR_SUPPORTED};
+use crate::{
+    BadiDateError, BadiDateLike, BadiMonth, Coordinates, LocalBadiDateLike, NaiveBadiDate,
+};
 
+/// A structure that holds a date in the Badí‘ (Bahá’í) calendar with associated time zone and optional coordinates
 #[derive(Debug, Clone, PartialEq)]
 pub struct BadiDate {
-    // The Badi day [1 - min(19, Ayyám-i-Há days for the year)]
-    pub day: u8,
-    // The Badi month [1 - 19] or Ayyám-i-Há
-    pub month: BadiMonth,
-    // The Bahá’í Era/Badi year [1 - 221 supported] (current year - 1843)
-    pub year: u8,
-    // The day of the current year (starting with 1 on Naw-Rúz)
-    pub day_of_year: u64,
-    // The WGS84 GPS coordinates from which sunset is calculated
-    pub coordinates: Option<Coordinates>,
-    // The time zone used for conversion to/from Gregorian dates/times
-    // This MUST match the coordinates or sunset times will be wrong!
-    pub timezone: Option<Tz>,
+    year: u8,
+    month: BadiMonth,
+    day: u16,
+    day_of_year: u16,
+    timezone: Tz,
+    coordinates: Option<Coordinates>,
 }
 
 impl BadiDate {
-    // Create a new BadiDate given day, BadiMonth, year, with optionals coordinates, time zone
+    /// Create a "naive" [`BadiDate`] (somewhat like a [`chrono::NaiveDateTime`] but simpler)
+    /// without time zone or location info.
+    pub fn naive(year: u8, month: BadiMonth, day: u16) -> Result<NaiveBadiDate, BadiDateError> {
+        NaiveBadiDate::new(year, month, day)
+    }
+
+    /// Create a new [`BadiDate`] given day, [`BadiMonth`], year,
+    /// with optionals [`Coordinates`], [`chrono::Tz`]; checks for validity
     pub fn new(
-        day: u8,
-        month: BadiMonth,
         year: u8,
+        month: BadiMonth,
+        day: u16,
+        timezone: Tz,
         coordinates: Option<Coordinates>,
-        timezone: Option<Tz>,
     ) -> Result<Self, BadiDateError> {
-        if year < 1 || year > LAST_YEAR_SUPPORTED {
-            return Err(BadiDateError::YearInvalid);
-        }
-        if !month.valid() {
-            return Err(BadiDateError::MonthInvalid);
-        }
-        let max_day = month.number_of_days(year);
-        if day < 1 || day > max_day {
-            return Err(BadiDateError::DayInvalid(max_day, month));
+        if let Err(err) = validate(year, month, day) {
+            return Err(err);
         }
         let day_of_year = day_of_year(year, &month, day);
         Ok(Self {
-            day,
-            month,
             year,
+            month,
+            day,
             coordinates,
             timezone,
             day_of_year,
         })
+    }
+}
+
+impl BadiDateLike for BadiDate {
+    fn year(&self) -> u8 {
+        self.year
+    }
+
+    fn month(&self) -> BadiMonth {
+        self.month
+    }
+
+    fn day(&self) -> u16 {
+        self.day
+    }
+
+    fn day_of_year(&self) -> u16 {
+        self.day_of_year
+    }
+
+    fn with_day(&self, day: u16) -> Result<BadiDate, BadiDateError> {
+        Self::new(self.year, self.month, day, self.timezone, self.coordinates)
+    }
+
+    fn with_ymd(&self, year: u8, month: BadiMonth, day: u16) -> Result<BadiDate, BadiDateError> {
+        Self::new(year, month, day, self.timezone, self.coordinates)
+    }
+
+    fn with_month(&self, month: BadiMonth) -> Result<BadiDate, BadiDateError> {
+        Self::new(self.year, month, self.day, self.timezone, self.coordinates)
+    }
+
+    fn with_year(&self, year: u8) -> Result<BadiDate, BadiDateError> {
+        Self::new(year, self.month, self.day, self.timezone, self.coordinates)
+    }
+}
+
+impl LocalBadiDateLike for BadiDate {
+    fn timezone(&self) -> Tz {
+        self.timezone
+    }
+
+    fn coordinates(&self) -> Option<Coordinates> {
+        self.coordinates
     }
 }
