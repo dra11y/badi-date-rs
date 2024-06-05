@@ -7,7 +7,7 @@ description = "Provides dates for the Badí' (Bahá’í) calendar and conversio
 homepage = "https://www.bahai.org"
 repository = "https://github.com/dra11y/badi-date-rs"
 license = "MIT"
-keywords = ["bahai", "badi", "naw-ruz", "calendar", "date", "time", "conversion", "sunset"]
+keywords = ["bahai", "badi", "calendar", "date"]
 categories = ["date-and-time", "internationalization", "localization"]
 
 [dependencies]
