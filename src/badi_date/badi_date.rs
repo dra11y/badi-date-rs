@@ -24,7 +24,7 @@ impl BadiDate {
     }
 
     /// Create a new [`BadiDate`] given day, [`BadiMonth`], year,
-    /// with optionals [`Coordinates`], [`chrono::Tz`]; checks for validity
+    /// with optionals [`Coordinates`], [`chrono_tz::Tz`]; checks for validity
     pub fn new(
         year: u8,
         month: BadiMonth,

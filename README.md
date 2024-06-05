@@ -6,12 +6,14 @@ A Rust crate that provides types and conversions between the Gregorian and Badi 
 
 - [ ] TODO: Add CHANGELOG.md file
 
-This crate is a work-in-progress and seems to be working correctly with initial tests. Edge cases have not been tested yet.
+This crate is a work-in-progress and its API is likely to change! It seems to be working correctly with initial tests. Edge cases have not been tested yet.
 
 - 0.2.0
   - BREAKING CHANGES:
-    - parameters order: BadiDate::new(year, month, day, timezone, coordinates)
-    - parameter types (day: u16, year: u8)
+    - parameters order: BadiDate::new(year, month, day, timezone, coordinates) to be consistent with other date/time libraries (ymd)
+    - parameter types (day: u16, year: u8) - to help avoid mixing up order of variables
+    - BadiDate timezone no longer optional
+  - NaiveBadiDate to support "generic" Badi dates without timezone/coordinates
   - rename `ToGregorian` and `FromLocal` traits to `ToDateTime` and `FromDateTime`
   - fix documentation so it shows up in docs.rs
 

@@ -2,6 +2,17 @@
 //!
 //! See [The Bahá’í Calendar at bahai.org](https://www.bahai.org/action/devotional-life/calendar).
 //!
+//! # Example: create [`NaiveBadiDate`]
+//!
+//! ```
+//! use badi_date::{NaiveBadiDate, BadiMonth, BadiDateOps};
+//! let badi_date = NaiveBadiDate::new(181, BadiMonth::Month(19), 19).unwrap();
+//! assert_eq!(
+//!     NaiveBadiDate::new(182, BadiMonth::Month(1), 1).unwrap(),
+//!     badi_date.add_days(1),
+//! );
+//! ```
+//!
 //! # Example: create [`BadiDate`] from local [`chrono::DateTime<Tz>`] and geo [`Coordinates`]
 //!
 //! ```

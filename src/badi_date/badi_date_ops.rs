@@ -1,6 +1,6 @@
 use crate::{BadiDateLike, BadiMonth};
 
-/// Determines resulting day in a returned [`BadiDate`] copy when adding/subtracting [`BadiMonth`]s
+/// Determines resulting day in a returned [`BadiDate`][`crate::BadiDate`] copy when adding/subtracting [`BadiMonth`]s
 #[derive(Debug)]
 pub enum DayChangeAction {
     /// Take the minimum of `self.day` and number of days in **resulting** [`BadiMonth`]
@@ -26,6 +26,10 @@ where
     fn next_feast(&self) -> T;
     /// Returns new [`BadiDateLike`] of the previous Feast (day 1 of [`BadiMonth::Month`] -- `self.month` is kept if `self.day` > 1), **skips** [`BadiMonth::AyyamIHa`])
     fn previous_feast(&self) -> T;
+    /// Returns new [`BadiDateLike`] of the next Naw Ruz (day 1 of `BadiMonth::Month(1)` of next `year`)
+    fn next_naw_ruz(&self) -> T;
+    /// Returns new [`BadiDateLike`] of the previous Naw Ruz (day 1 of `BadiMonth::Month(1)` -- `self.year` is kept if `self` > current Naw Ruz)
+    fn previous_naw_ruz(&self) -> T;
     /// Returns new [`BadiDateLike`] with number of days added (subtracted if negative) (increments `month` and `year` accordingly; **includes** [`BadiMonth::AyyamIHa`])
     fn add_days(&self, days: i32) -> T;
     /// Add (subtract if months negative) number of `months` to [`BadiDateLike`]
@@ -162,7 +166,21 @@ where
                 }
             }
         }
-        Self::with_ymd(&self, year, month, day).unwrap()
+        self.with_ymd(year, month, day).unwrap()
+    }
+
+    fn next_naw_ruz(&self) -> T {
+        self.with_ymd(self.year() + 1, BadiMonth::Month(1), 1)
+            .unwrap()
+    }
+
+    fn previous_naw_ruz(&self) -> T {
+        let year = if self.day_of_year() > 1 {
+            self.year()
+        } else {
+            self.year() - 1
+        };
+        self.with_ymd(year, BadiMonth::Month(1), 1).unwrap()
     }
 }
 
