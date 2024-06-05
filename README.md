@@ -87,7 +87,7 @@ This crate has an MIT license so, by opening an issue or pull request, you agree
 
 ## Background
 
-The Bahá’í calendar, known as the Badí‘ calendar, is a **solar** calendar that simplifies the year with 19 months of 19 days each, with 4 or 5 intercalary days known as Ayyám-i-Há between months 18 and 19, and starts with year 1 on sunset, Naw-Rúz, March 21, 1844.
+The Bahá’í calendar, known as the Badí‘ calendar, is a **solar** calendar that simplifies the year with 19 months of 19 days each, with 4 or 5 intercalary days known as Ayyám-i-Há between months 18 and 19, and starts with year 1 on sunset, Naw-Rúz, 21 March, 1844.
 
 Each Bahá’í / Badi day starts at sunset in the local area (thus, like other calendars, the start of the day is “rolling” across the world from east to west). In the case of extreme north and south latitudes, the start of day time is instead fixed by clocks (usually 18:00 **). This crate includes calculation of local sunset times for a given latitude, longitude, and time zone.
 
@@ -115,7 +115,7 @@ badi_day = day_of_badi_year - (342 + number_of_days_in_ayyamiha)
 
 > “The Festival of Naw-Rúz falleth on the day that the sun entereth the sign of Aries, even should this occur no more than one minute before sunset.” – Bahá’u’lláh
 
-Naw-Rúz falls on the date the vernal (spring) equinox occurs between sunrise and sunset in Ṭihrán, Iran (the birthplace of Bahá’u’lláh). Due to the Gregorian calendar not being a true solar calendar, Naw-Rúz shifts between March 20 and 21 each year.
+Naw-Rúz falls on the date the vernal (spring) equinox occurs between sunrise and sunset in Ṭihrán, Iran (the birthplace of Bahá’u’lláh). Due to the Gregorian calendar not being a true solar calendar, Naw-Rúz shifts between 20 and 21 March each year.
 
 > “The adoption of a new calendar in each dispensation is a symbol of the power of Divine Revelation to reshape human perception of material, social, and spiritual reality. Through it, sacred moments are distinguished, humanity’s place in time and space reimagined, and the rhythm of life recast.” — <cite>[The Universal House of Justice, 10 July 2014](https://www.bahai.org/library/authoritative-texts/the-universal-house-of-justice/messages/20140710_001/1)</cite>
 

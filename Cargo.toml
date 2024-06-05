@@ -1,7 +1,14 @@
 [package]
-name = "badi_date"
+name = "badi-date"
 version = "0.1.0"
 edition = "2021"
+authors = ["Tom Grushka"]
+description = "Provides dates for the Badí' (Bahá’í) calendar and conversions between Badí' and Gregorian dates."
+homepage = "https://www.bahai.org"
+repository = "https://github.com/dra11y/badi-date-rs"
+license = "MIT"
+keywords = ["bahai", "badi", "naw-ruz", "calendar", "date", "time", "conversion", "sunset"]
+categories = ["date-and-time", "internationalization", "localization"]
 
 [dependencies]
 chrono = { version = "0.4", features = ["serde"] }
