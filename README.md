@@ -27,7 +27,7 @@ cargo add badi-date@0.1
 ```bash
 cargo new test_badi_date
 cd test_badi_date
-cargo add badi_date
+cargo add badi_date@0.1
 cargo add chrono@0.4
 cargo add chrono-tz@0.9
 cargo add now@0.1
