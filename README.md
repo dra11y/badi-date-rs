@@ -14,6 +14,7 @@ This crate is a work-in-progress and its API is likely to change! It seems to be
     - parameters order: LocalBadiDate::new(year, month, day, timezone, coordinates) to be consistent with other date/time libraries (ymd)
     - parameter types (day: u16, year: u8) - to help avoid mixing up order of variables
     - LocalBadiDate timezone no longer optional
+    - rename `LocalBadiDate::from_local` to `LocalBadiDate::from_datetime`
   - BadiDate is now "generic" without timezone/coordinates
   - rename `ToGregorian` and `FromLocal` traits to `ToDateTime` and `FromDateTime`
   - fix documentation so it shows up in docs.rs

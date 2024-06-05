@@ -21,7 +21,7 @@
 //! let denver: chrono_tz::Tz = "America/Denver".parse().unwrap();
 //! let coords = Some(Coordinates::new(39.613319, -105.016647).unwrap());
 //! let date = denver.with_ymd_and_hms(2024, 3, 19, 18, 0, 0).unwrap();
-//! let badi_date = LocalBadiDate::from_local(date, coords).unwrap();
+//! let badi_date = LocalBadiDate::from_datetime(date, coords).unwrap();
 //! assert_eq!(
 //!     LocalBadiDate::new(180, BadiMonth::Month(19), 19, denver, coords).unwrap(),
 //!     badi_date,
@@ -35,7 +35,7 @@
 //! use chrono::TimeZone;
 //! let denver: chrono_tz::Tz = "America/Denver".parse().unwrap();
 //! let date = denver.with_ymd_and_hms(2024, 3, 19, 18, 0, 0).unwrap();
-//! let badi_date = LocalBadiDate::from_local(date, None).unwrap();
+//! let badi_date = LocalBadiDate::from_datetime(date, None).unwrap();
 //! assert_eq!(
 //!     LocalBadiDate::new(181, BadiMonth::Month(1), 1, denver, None).unwrap(),
 //!     badi_date,

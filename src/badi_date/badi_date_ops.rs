@@ -1,6 +1,6 @@
 use crate::{BadiDateLike, BadiMonth};
 
-/// Determines resulting day in a returned [`LocalBadiDate`][`crate::LocalBadiDate`] copy when adding/subtracting [`BadiMonth`]s
+/// Determines resulting day in a returned [`BadiDateLike`][`crate::BadiDateLike`] copy when adding/subtracting [`BadiMonth`]s
 #[derive(Debug)]
 pub enum DayChangeAction {
     /// Take the minimum of `self.day` and number of days in **resulting** [`BadiMonth`]
@@ -186,7 +186,7 @@ where
 
 #[cfg(test)]
 mod tests {
-    use crate::{BadiDateOps, BadiMonth, DayChangeAction, BadiDate};
+    use crate::{BadiDate, BadiDateOps, BadiMonth, DayChangeAction};
 
     #[test]
     fn add_subtract_next_previous() {

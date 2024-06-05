@@ -2,7 +2,7 @@ use std::fmt::Display;
 
 use crate::{BadiMonth, LAST_YEAR_SUPPORTED};
 
-/// Error returned from trying to construct a [`LocalBadiDate`][`crate::LocalBadiDate`] with invalid parameters
+/// Error returned from trying to construct a [`BadiDateLike`][`crate::BadiDateLike`] with invalid parameters
 #[derive(Debug)]
 pub enum BadiDateError {
     ///! The day number passed in for a given [`BadiMonth`] is invalid for that month

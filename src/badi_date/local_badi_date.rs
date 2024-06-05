@@ -1,7 +1,7 @@
 use chrono_tz::Tz;
 
 use super::util::*;
-use crate::{BadiDate, BadiDateError, BadiDateLike, BadiMonth, Coordinates, LocalBadiDateLike};
+use crate::{BadiDateError, BadiDateLike, BadiMonth, Coordinates, LocalBadiDateLike};
 
 /// A structure that holds a date in the Badí‘ (Bahá’í) calendar with associated time zone and optional coordinates
 #[derive(Debug, Clone, PartialEq)]
@@ -15,12 +15,6 @@ pub struct LocalBadiDate {
 }
 
 impl LocalBadiDate {
-    /// Create a "naive" [`LocalBadiDate`] (somewhat like a [`chrono::NaiveDateTime`] but simpler)
-    /// without time zone or location info.
-    pub fn naive(year: u8, month: BadiMonth, day: u16) -> Result<BadiDate, BadiDateError> {
-        BadiDate::new(year, month, day)
-    }
-
     /// Create a new [`LocalBadiDate`] given day, [`BadiMonth`], year,
     /// with optionals [`Coordinates`], [`chrono_tz::Tz`]; checks for validity
     pub fn new(

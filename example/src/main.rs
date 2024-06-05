@@ -11,7 +11,7 @@ fn main() {
 
     // Test a specific date/time before actual sunset
     let date = denver.with_ymd_and_hms(2024, 3, 19, 18, 0, 0).unwrap();
-    let badi_date = LocalBadiDate::from_local(date, coords).unwrap();
+    let badi_date = LocalBadiDate::from_datetime(date, coords).unwrap();
     assert_eq!(
         LocalBadiDate::new(180, BadiMonth::Month(19), 19, denver, coords).unwrap(),
         badi_date,
@@ -20,7 +20,7 @@ fn main() {
 
     // Test a dynamic date/time
     let now = denver.now();
-    let badi_now = LocalBadiDate::from_local(now, coords).unwrap();
+    let badi_now = LocalBadiDate::from_datetime(now, coords).unwrap();
     assert!(badi_now.start() <= now && badi_now.end() >= now);
     println!(
         "now: {:?}\nbadi_now: {:?}\nstart: {:?}\nend: {:?}",
@@ -31,7 +31,7 @@ fn main() {
     );
 
     // Test fallback conversion (no coordinates)
-    let badi_fallback = LocalBadiDate::from_local(date, None).unwrap();
+    let badi_fallback = LocalBadiDate::from_datetime(date, None).unwrap();
     assert_eq!(
         LocalBadiDate::new(181, BadiMonth::Month(1), 1, denver, None).unwrap(),
         badi_fallback,

@@ -8,7 +8,7 @@ use super::util::*;
 /// Provides methods to create a [`LocalBadiDate`] from a Gregorian [`DateTime`]
 pub trait FromDateTime {
     /// Create a new LocalBadiDate given a local time-zoned date and coordinates
-    fn from_local(
+    fn from_datetime(
         date: DateTime<Tz>,
         coordinates: Option<Coordinates>,
     ) -> Result<LocalBadiDate, BadiDateError>;
@@ -19,7 +19,7 @@ impl FromDateTime for LocalBadiDate {
     // https://www.bahai.org/action/devotional-life/calendar
     // adapted from https://github.com/Soroosh/badi_date/blob/main/lib/badi_date.dart
     // and https://github.com/janrg/badiDate/blob/master/src/badiDate.ts
-    fn from_local(
+    fn from_datetime(
         date: DateTime<Tz>,
         coordinates: Option<Coordinates>,
     ) -> Result<Self, BadiDateError> {
@@ -61,7 +61,7 @@ mod tests {
     use crate::{BadiMonth, Coordinates, FromDateTime, LocalBadiDate, ToDateTime};
 
     #[test]
-    fn badi_date_from_local() {
+    fn badi_date_from_datetime() {
         let denver: Tz = "America/Denver".parse().unwrap();
         let coords = Some(Coordinates::new(39.613319, -105.016647).unwrap());
         let test_dates: Vec<(String, DateTime<Tz>, LocalBadiDate)> = vec![
@@ -142,7 +142,7 @@ mod tests {
                 "\n==================================\nTEST: {}, date: {}",
                 description, date
             );
-            let badi_date = LocalBadiDate::from_local(date, coords).unwrap();
+            let badi_date = LocalBadiDate::from_datetime(date, coords).unwrap();
             assert_eq!(badi_date, expected_badi, "{}", description);
             println!(
                 "date: {}, start: {}, end: {}",
