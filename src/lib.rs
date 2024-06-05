@@ -2,42 +2,42 @@
 //!
 //! See [The Bahá’í Calendar at bahai.org](https://www.bahai.org/action/devotional-life/calendar).
 //!
-//! # Example: create [`NaiveBadiDate`]
+//! # Example: create [`BadiDate`]
 //!
 //! ```
-//! use badi_date::{NaiveBadiDate, BadiMonth, BadiDateOps};
-//! let badi_date = NaiveBadiDate::new(181, BadiMonth::Month(19), 19).unwrap();
+//! use badi_date::{BadiDate, BadiMonth, BadiDateOps};
+//! let badi_date = BadiDate::new(181, BadiMonth::Month(19), 19).unwrap();
 //! assert_eq!(
-//!     NaiveBadiDate::new(182, BadiMonth::Month(1), 1).unwrap(),
+//!     BadiDate::new(182, BadiMonth::Month(1), 1).unwrap(),
 //!     badi_date.add_days(1),
 //! );
 //! ```
 //!
-//! # Example: create [`BadiDate`] from local [`chrono::DateTime<Tz>`] and geo [`Coordinates`]
+//! # Example: create [`LocalBadiDate`] from local [`chrono::DateTime<Tz>`] and geo [`Coordinates`]
 //!
 //! ```
-//! use badi_date::{BadiDate, BadiMonth, Coordinates, FromDateTime};
+//! use badi_date::{LocalBadiDate, BadiMonth, Coordinates, FromDateTime};
 //! use chrono::TimeZone;
 //! let denver: chrono_tz::Tz = "America/Denver".parse().unwrap();
 //! let coords = Some(Coordinates::new(39.613319, -105.016647).unwrap());
 //! let date = denver.with_ymd_and_hms(2024, 3, 19, 18, 0, 0).unwrap();
-//! let badi_date = BadiDate::from_local(date, coords).unwrap();
+//! let badi_date = LocalBadiDate::from_local(date, coords).unwrap();
 //! assert_eq!(
-//!     BadiDate::new(180, BadiMonth::Month(19), 19, denver, coords).unwrap(),
+//!     LocalBadiDate::new(180, BadiMonth::Month(19), 19, denver, coords).unwrap(),
 //!     badi_date,
 //! );
 //! ```
 //!
-//! # Example: create [`BadiDate`] from local [`chrono::DateTime<Tz>`] without [`Coordinates`]
+//! # Example: create [`LocalBadiDate`] from local [`chrono::DateTime<Tz>`] without [`Coordinates`]
 //!
 //! ```
-//! use badi_date::{BadiDate, BadiMonth, Coordinates, FromDateTime};
+//! use badi_date::{LocalBadiDate, BadiMonth, Coordinates, FromDateTime};
 //! use chrono::TimeZone;
 //! let denver: chrono_tz::Tz = "America/Denver".parse().unwrap();
 //! let date = denver.with_ymd_and_hms(2024, 3, 19, 18, 0, 0).unwrap();
-//! let badi_date = BadiDate::from_local(date, None).unwrap();
+//! let badi_date = LocalBadiDate::from_local(date, None).unwrap();
 //! assert_eq!(
-//!     BadiDate::new(181, BadiMonth::Month(1), 1, denver, None).unwrap(),
+//!     LocalBadiDate::new(181, BadiMonth::Month(1), 1, denver, None).unwrap(),
 //!     badi_date,
 //! );
 //! ```

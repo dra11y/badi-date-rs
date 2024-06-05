@@ -1,5 +1,5 @@
 #[derive(Clone, Copy, Debug, PartialEq)]
-/// WGS-84 GPS coordinates used to calculate sunset times for a [`BadiDate`][`crate::BadiDate`]
+/// WGS-84 GPS coordinates used to calculate sunset times for a [`LocalBadiDate`][`crate::LocalBadiDate`]
 pub struct Coordinates {
     /// The latitude [-90...90.] in the WGS-84 coordinate system
     pub latitude: f64,

@@ -4,8 +4,8 @@ pub use badi_month::BadiMonth;
 mod badi_date;
 pub use badi_date::*;
 
-mod naive_badi_date;
-pub use naive_badi_date::*;
+mod local_badi_date;
+pub use local_badi_date::*;
 
 mod badi_date_like;
 pub use badi_date_like::*;

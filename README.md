@@ -10,10 +10,11 @@ This crate is a work-in-progress and its API is likely to change! It seems to be
 
 - 0.2.0
   - BREAKING CHANGES:
-    - parameters order: BadiDate::new(year, month, day, timezone, coordinates) to be consistent with other date/time libraries (ymd)
+    - BadiDate renamed to LocalBadiDate; BadiDate is now without timezone/coordinates
+    - parameters order: LocalBadiDate::new(year, month, day, timezone, coordinates) to be consistent with other date/time libraries (ymd)
     - parameter types (day: u16, year: u8) - to help avoid mixing up order of variables
-    - BadiDate timezone no longer optional
-  - NaiveBadiDate to support "generic" Badi dates without timezone/coordinates
+    - LocalBadiDate timezone no longer optional
+  - BadiDate is now "generic" without timezone/coordinates
   - rename `ToGregorian` and `FromLocal` traits to `ToDateTime` and `FromDateTime`
   - fix documentation so it shows up in docs.rs
 
@@ -57,16 +58,16 @@ fn main() {
 
     // Test a specific date/time before actual sunset
     let date = denver.with_ymd_and_hms(2024, 3, 19, 18, 0, 0).unwrap();
-    let badi_date = BadiDate::from_local(date, coords).unwrap();
+    let badi_date = LocalBadiDate::from_local(date, coords).unwrap();
     assert_eq!(
-        BadiDate::new(19, BadiMonth::Month(19), 180, coords, Some(denver)).unwrap(),
+        LocalBadiDate::new(19, BadiMonth::Month(19), 180, coords, Some(denver)).unwrap(),
         badi_date,
     );
     println!("date: {:?}\nbadi_date: {:?}", date, badi_date);
 
     // Test a dynamic date/time
     let now = denver.now();
-    let badi_now = BadiDate::from_local(now, coords).unwrap();
+    let badi_now = LocalBadiDate::from_local(now, coords).unwrap();
     assert!(badi_now.start() <= now && badi_now.end() >= now);
     println!(
         "now: {:?}\nbadi_now: {:?}\nstart: {:?}\nend: {:?}",
@@ -77,9 +78,9 @@ fn main() {
     );
 
     // Test fallback conversion (no coordinates)
-    let badi_fallback = BadiDate::from_local(date, None).unwrap();
+    let badi_fallback = LocalBadiDate::from_local(date, None).unwrap();
     assert_eq!(
-        BadiDate::new(1, BadiMonth::Month(1), 181, None, Some(denver)).unwrap(),
+        LocalBadiDate::new(1, BadiMonth::Month(1), 181, None, Some(denver)).unwrap(),
         badi_fallback,
     );
     println!("date: {:?}\nbadi_fallback: {:?}", date, badi_fallback);

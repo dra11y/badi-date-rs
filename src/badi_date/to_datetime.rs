@@ -3,19 +3,19 @@ use chrono_tz::Tz;
 use now::DateTimeNow;
 
 use super::util::*;
-use crate::{statics::*, BadiDate, BadiDateLike, LocalBadiDateLike};
+use crate::{statics::*, BadiDateLike, LocalBadiDate, LocalBadiDateLike};
 
-/// Provides methods to convert [`BadiDate`] to a local Gregorian [`DateTime<Tz>`]
+/// Provides methods to convert [`LocalBadiDate`] to a local Gregorian [`DateTime<Tz>`]
 pub trait ToDateTime {
-    /// The moment of sunset of this BadiDate in local time
+    /// The moment of sunset of this LocalBadiDate in local time
     fn start(&self) -> DateTime<Tz>;
-    /// The moment of sunset of the end of this / start of next BadiDate in local time
+    /// The moment of sunset of the end of this / start of next LocalBadiDate in local time
     fn end(&self) -> DateTime<Tz>;
     /// Midnight (in local time) of this BadiDate
     fn midnight(&self) -> DateTime<Tz>;
 }
 
-impl ToDateTime for BadiDate {
+impl ToDateTime for LocalBadiDate {
     fn start(&self) -> DateTime<Tz> {
         get_last_sunset(&self.coordinates(), self.midnight())
     }

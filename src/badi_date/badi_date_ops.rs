@@ -1,6 +1,6 @@
 use crate::{BadiDateLike, BadiMonth};
 
-/// Determines resulting day in a returned [`BadiDate`][`crate::BadiDate`] copy when adding/subtracting [`BadiMonth`]s
+/// Determines resulting day in a returned [`LocalBadiDate`][`crate::LocalBadiDate`] copy when adding/subtracting [`BadiMonth`]s
 #[derive(Debug)]
 pub enum DayChangeAction {
     /// Take the minimum of `self.day` and number of days in **resulting** [`BadiMonth`]
@@ -186,88 +186,88 @@ where
 
 #[cfg(test)]
 mod tests {
-    use crate::{BadiDateOps, BadiMonth, DayChangeAction, NaiveBadiDate};
+    use crate::{BadiDateOps, BadiMonth, DayChangeAction, BadiDate};
 
     #[test]
     fn add_subtract_next_previous() {
-        let badi = NaiveBadiDate::new(181, BadiMonth::Month(1), 2).unwrap();
+        let badi = BadiDate::new(181, BadiMonth::Month(1), 2).unwrap();
         assert_eq!(
             badi.next_day(),
-            NaiveBadiDate::new(181, BadiMonth::Month(1), 3).unwrap()
+            BadiDate::new(181, BadiMonth::Month(1), 3).unwrap()
         );
         assert_eq!(
             badi.add_days(-2),
-            NaiveBadiDate::new(180, BadiMonth::Month(19), 19).unwrap()
+            BadiDate::new(180, BadiMonth::Month(19), 19).unwrap()
         );
         assert_eq!(badi.add_days(-2).add_days(2), badi);
         assert_eq!(
             badi.add_days(-21),
-            NaiveBadiDate::new(180, BadiMonth::AyyamIHa, 4).unwrap()
+            BadiDate::new(180, BadiMonth::AyyamIHa, 4).unwrap()
         );
         assert_eq!(
-            NaiveBadiDate::new(180, BadiMonth::AyyamIHa, 4)
+            BadiDate::new(180, BadiMonth::AyyamIHa, 4)
                 .unwrap()
                 .add_days(1),
-            NaiveBadiDate::new(180, BadiMonth::Month(19), 1).unwrap()
+            BadiDate::new(180, BadiMonth::Month(19), 1).unwrap()
         );
         assert_eq!(
-            NaiveBadiDate::new(180, BadiMonth::Month(18), 19)
+            BadiDate::new(180, BadiMonth::Month(18), 19)
                 .unwrap()
                 .add_days(5),
-            NaiveBadiDate::new(180, BadiMonth::Month(19), 1).unwrap()
+            BadiDate::new(180, BadiMonth::Month(19), 1).unwrap()
         );
         assert_eq!(
             badi.next_month(true),
-            NaiveBadiDate::new(181, BadiMonth::Month(2), 2).unwrap()
+            BadiDate::new(181, BadiMonth::Month(2), 2).unwrap()
         );
         assert_eq!(
-            NaiveBadiDate::new(180, BadiMonth::Month(18), 17)
+            BadiDate::new(180, BadiMonth::Month(18), 17)
                 .unwrap()
                 .next_month(true),
-            NaiveBadiDate::new(180, BadiMonth::Month(19), 17).unwrap()
+            BadiDate::new(180, BadiMonth::Month(19), 17).unwrap()
         );
         assert_eq!(
-            NaiveBadiDate::new(180, BadiMonth::Month(18), 17)
+            BadiDate::new(180, BadiMonth::Month(18), 17)
                 .unwrap()
                 .next_month(false),
-            NaiveBadiDate::new(180, BadiMonth::AyyamIHa, 4).unwrap()
+            BadiDate::new(180, BadiMonth::AyyamIHa, 4).unwrap()
         );
         assert_eq!(
-            NaiveBadiDate::new(180, BadiMonth::Month(18), 17)
+            BadiDate::new(180, BadiMonth::Month(18), 17)
                 .unwrap()
                 .add_months(2, DayChangeAction::Keep, false),
-            NaiveBadiDate::new(180, BadiMonth::Month(19), 4).unwrap()
+            BadiDate::new(180, BadiMonth::Month(19), 4).unwrap()
         );
         assert_eq!(
-            NaiveBadiDate::new(180, BadiMonth::Month(18), 17)
+            BadiDate::new(180, BadiMonth::Month(18), 17)
                 .unwrap()
                 .add_months(2, DayChangeAction::Keep, true),
-            NaiveBadiDate::new(181, BadiMonth::Month(1), 17).unwrap()
+            BadiDate::new(181, BadiMonth::Month(1), 17).unwrap()
         );
         assert_eq!(
-            NaiveBadiDate::new(180, BadiMonth::Month(18), 17)
+            BadiDate::new(180, BadiMonth::Month(18), 17)
                 .unwrap()
                 .next_feast(),
-            NaiveBadiDate::new(180, BadiMonth::Month(19), 1).unwrap()
+            BadiDate::new(180, BadiMonth::Month(19), 1).unwrap()
         );
         assert_eq!(
-            NaiveBadiDate::new(180, BadiMonth::Month(18), 1)
+            BadiDate::new(180, BadiMonth::Month(18), 1)
                 .unwrap()
                 .next_feast(),
-            NaiveBadiDate::new(180, BadiMonth::Month(19), 1).unwrap()
+            BadiDate::new(180, BadiMonth::Month(19), 1).unwrap()
         );
         assert_eq!(
-            NaiveBadiDate::new(180, BadiMonth::Month(18), 17)
+            BadiDate::new(180, BadiMonth::Month(18), 17)
                 .unwrap()
                 .previous_feast(),
-            NaiveBadiDate::new(180, BadiMonth::Month(18), 1).unwrap()
+            BadiDate::new(180, BadiMonth::Month(18), 1).unwrap()
         );
         assert_eq!(
-            NaiveBadiDate::new(180, BadiMonth::Month(18), 17)
+            BadiDate::new(180, BadiMonth::Month(18), 17)
                 .unwrap()
                 .previous_feast()
                 .previous_feast(),
-            NaiveBadiDate::new(180, BadiMonth::Month(17), 1).unwrap()
+            BadiDate::new(180, BadiMonth::Month(17), 1).unwrap()
         );
     }
 }

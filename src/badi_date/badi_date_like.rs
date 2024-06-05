@@ -1,6 +1,6 @@
 use crate::{BadiDateError, BadiMonth};
 
-/// Common trait for [`BadiDate`][`crate::BadiDate`] and [`NaiveBadiDate`][`crate::NaiveBadiDate`]
+/// Common trait for [`LocalBadiDate`][`crate::LocalBadiDate`] and [`BadiDate`][`crate::BadiDate`]
 pub trait BadiDateLike: Clone {
     /// The Bahá’í Era/Badi year [1 - 221 supported] (year 1 starts 21 March 1844)
     fn year(&self) -> u8;
