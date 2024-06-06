@@ -47,6 +47,7 @@ fn main() {
         declaration.holy_day(),
         Some(BahaiHolyDay::DeclarationOfTheBab),
     );
+
     assert_eq!(declaration.holy_day().unwrap().work_suspended(), true);
 
     let naw_ruz = BadiDate::new(182, BadiMonth::Month(1), 1).unwrap();

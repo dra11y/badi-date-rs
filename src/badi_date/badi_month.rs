@@ -4,13 +4,40 @@ use crate::BadiDateError;
 
 use super::util::*;
 
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, Eq, Ord, PartialEq)]
 /// Represents one of the 19 Bahá’í months or Ayyám-i-Há
 pub enum BadiMonth {
     /// One of the 19 Badi/Bahá’í months (parameter is 1-based month number)
     Month(u8),
     /// The intercalary days of Ayyám-i-Há
     AyyamIHa,
+}
+
+impl PartialOrd for BadiMonth {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        match self {
+            BadiMonth::Month(sm) => match other {
+                BadiMonth::Month(om) => sm.partial_cmp(om),
+                BadiMonth::AyyamIHa => {
+                    if *sm == 19 {
+                        Some(std::cmp::Ordering::Greater)
+                    } else {
+                        Some(std::cmp::Ordering::Less)
+                    }
+                }
+            },
+            BadiMonth::AyyamIHa => match other {
+                BadiMonth::Month(om) => {
+                    if *om == 19 {
+                        Some(std::cmp::Ordering::Less)
+                    } else {
+                        Some(std::cmp::Ordering::Greater)
+                    }
+                }
+                BadiMonth::AyyamIHa => Some(std::cmp::Ordering::Equal),
+            },
+        }
+    }
 }
 
 impl BadiMonth {

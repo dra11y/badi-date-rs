@@ -1,12 +1,12 @@
-use chrono_tz::Tz;
-
 use super::util::*;
 use crate::{
     BadiDateError, BadiDateLike, BadiMonth, Coordinates, HolyDayProviding, LocalBadiDateLike,
+    ToDateTime,
 };
+use chrono_tz::Tz;
 
 /// A structure that holds a date in the Badí‘ (Bahá’í) calendar with associated time zone and optional coordinates
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone)]
 pub struct LocalBadiDate {
     year: u8,
     month: BadiMonth,
@@ -14,6 +14,32 @@ pub struct LocalBadiDate {
     day_of_year: u16,
     timezone: Tz,
     coordinates: Option<Coordinates>,
+}
+
+impl Eq for LocalBadiDate {}
+
+impl PartialEq for LocalBadiDate {
+    fn eq(&self, other: &Self) -> bool {
+        self.year == other.year
+            && self.month == other.month
+            && self.day == other.day
+            && self.day_of_year == other.day_of_year
+            && self.timezone == other.timezone
+    }
+}
+
+impl Ord for LocalBadiDate {
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+        self.partial_cmp(&other).unwrap()
+    }
+}
+
+impl PartialOrd for LocalBadiDate {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        let self_start = self.start().timestamp();
+        let other_start = other.start().timestamp();
+        self_start.partial_cmp(&other_start)
+    }
 }
 
 impl LocalBadiDate {

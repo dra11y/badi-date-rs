@@ -2,7 +2,7 @@ use super::util::*;
 use crate::{BadiDateError, BadiDateLike, BadiMonth, HolyDayProviding};
 
 /// A structure that holds a date in the Badí‘ (Bahá’í) calendar without time zone or location info
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, Eq, Ord, PartialOrd, PartialEq)]
 pub struct BadiDate {
     year: u8,
     month: BadiMonth,

@@ -1,5 +1,7 @@
 use std::collections::BTreeMap;
 
+use rust_i18n::t;
+
 use crate::{HOLY_DAYS_FALLBACK, YEAR_SPECIFICS};
 
 /// List of the 11 Bahá’í Holy Days (9 on which work is to be suspended)
@@ -42,22 +44,28 @@ pub enum BahaiHolyDay {
 }
 
 impl BahaiHolyDay {
-    pub(crate) fn holy_days_for_year(year: u8) -> BTreeMap<u16, BahaiHolyDay> {
-        let specifics: Option<&crate::YearSpecifics> = YEAR_SPECIFICS.get(&year);
-        HOLY_DAYS_FALLBACK
-            .iter()
-            .map(|(k, v)| {
-                let key = match specifics {
-                    Some(specifics) => match k {
-                        BahaiHolyDay::BirthOfTheBab => specifics.birth_of_bab,
-                        BahaiHolyDay::BirthOfBahaullah => specifics.birth_of_bab + 1,
-                        _ => *v,
-                    },
-                    None => *v,
-                };
-                (key, k.clone())
-            })
-            .collect()
+    /// English name of the holy day
+    pub fn english(&self) -> String {
+        self.name("en")
+    }
+
+    /// Name of the holy day in the given `locale`
+    /// TODO: Currently only "en" is available
+    pub fn name(&self, locale: &str) -> String {
+        match self {
+            BahaiHolyDay::NawRuz => t!("naw_ruz", locale = locale),
+            BahaiHolyDay::Ridvan1st => t!("ridvan_1st", locale = locale),
+            BahaiHolyDay::Ridvan9th => t!("ridvan_9th", locale = locale),
+            BahaiHolyDay::Ridvan12th => t!("ridvan_12th", locale = locale),
+            BahaiHolyDay::DeclarationOfTheBab => t!("declaration_of_the_bab", locale = locale),
+            BahaiHolyDay::AscensionOfBahaullah => t!("ascension_of_bahaullah", locale = locale),
+            BahaiHolyDay::MartyrdomOfTheBab => t!("martyrdom_of_the_bab", locale = locale),
+            BahaiHolyDay::BirthOfTheBab => t!("birth_of_the_bab", locale = locale),
+            BahaiHolyDay::BirthOfBahaullah => t!("birth_of_bahaullah", locale = locale),
+            BahaiHolyDay::DayOfTheCovenant => t!("day_of_the_covenant", locale = locale),
+            BahaiHolyDay::AscensionOfAbdulBaha => t!("ascension_of_abdul_baha", locale = locale),
+        }
+        .to_string()
     }
 
     /// Get the 1-based Badi day of the Badi year on which the holy day occurs in the given Badi `year`
@@ -85,5 +93,23 @@ impl BahaiHolyDay {
             BahaiHolyDay::AscensionOfAbdulBaha,
         ]
         .contains(self)
+    }
+
+    pub(crate) fn holy_days_for_year(year: u8) -> BTreeMap<u16, BahaiHolyDay> {
+        let specifics: Option<&crate::YearSpecifics> = YEAR_SPECIFICS.get(&year);
+        HOLY_DAYS_FALLBACK
+            .iter()
+            .map(|(k, v)| {
+                let key = match specifics {
+                    Some(specifics) => match k {
+                        BahaiHolyDay::BirthOfTheBab => specifics.birth_of_bab,
+                        BahaiHolyDay::BirthOfBahaullah => specifics.birth_of_bab + 1,
+                        _ => *v,
+                    },
+                    None => *v,
+                };
+                (key, k.clone())
+            })
+            .collect()
     }
 }
