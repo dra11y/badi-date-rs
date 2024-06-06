@@ -1,6 +1,6 @@
 [package]
 name = "badi-date"
-version = "0.2.2"
+version = "0.2.3"
 edition = "2021"
 authors = ["Tom Grushka"]
 description = "Provides dates for the Badí' (Bahá’í) calendar and conversions between Badí' and Gregorian dates."

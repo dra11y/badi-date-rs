@@ -1,6 +1,13 @@
 # badi-date CHANGELOG
 
-# 0.2.1
+## 0.2.3
+- update CHANGELOG
+
+## 0.2.2
+- holy day names
+- fix README example
+
+## 0.2.1
 - Add holy day support:
   - `BahaiHolyDay` enum
   - `HolyDayProviding` trait

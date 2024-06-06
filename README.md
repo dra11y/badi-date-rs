@@ -6,13 +6,6 @@ A Rust crate that provides types and conversions between the Gregorian and Badi 
 
 ### See CHANGELOG.md for breaking changes 0.1 -> 0.2.
 
-### Latest: 0.2.2
-- 0.2.2: Correct README example
-- 0.2.1: Add holy day support:
-  - `BahaiHolyDay` enum
-  - `HolyDayProviding` trait
-    - next, previous, current holy day info for `BadiDateLike`
-
 This crate is a work-in-progress and its API is likely to change! It seems to be working correctly with initial tests. Edge cases have not been tested yet.
 
 ## Installation
