@@ -1,4 +1,7 @@
-use badi_date::{BadiMonth, Coordinates, FromDateTime, LocalBadiDate, ToDateTime};
+use badi_date::{
+    BadiDate, BadiMonth, BahaiHolyDay, Coordinates, FromDateTime, HolyDayProviding, LocalBadiDate,
+    ToDateTime,
+};
 use chrono::TimeZone;
 use chrono_tz::Tz;
 use now::TimeZoneNow;
@@ -6,7 +9,7 @@ use now::TimeZoneNow;
 fn main() {
     // Replace with your timezone / WGS84 GPS coordinates
     let denver: Tz = "America/Denver".parse().unwrap();
-    // WARNING! Setting `coordinates` to `None` will return fallback time `badi_date::statics::START_OF_DAY_FALLBACK`
+    // ATTENTION! Setting `coordinates` to `None` will return fallback time `badi_date::statics::START_OF_DAY_FALLBACK`
     let coords = Some(Coordinates::new(39.613319, -105.016647).unwrap());
 
     // Test a specific date/time before actual sunset
@@ -37,4 +40,24 @@ fn main() {
         badi_fallback,
     );
     println!("date: {:?}\nbadi_fallback: {:?}", date, badi_fallback);
+
+    // Declaration of the Báb
+    let declaration = BadiDate::new(181, BadiMonth::Month(4), 8).unwrap();
+    assert_eq!(
+        declaration.holy_day(),
+        Some(BahaiHolyDay::DeclarationOfTheBab),
+    );
+    assert_eq!(declaration.holy_day().unwrap().work_suspended(), true);
+
+    let naw_ruz = BadiDate::new(182, BadiMonth::Month(1), 1).unwrap();
+    let ascension = naw_ruz.previous_holy_day().unwrap();
+    assert_eq!(
+        ascension,
+        BadiDate::new(181, BadiMonth::Month(14), 6).unwrap()
+    );
+    assert_eq!(
+        ascension.holy_day(),
+        Some(BahaiHolyDay::AscensionOfAbdulBaha),
+    );
+    assert_eq!(ascension.holy_day().unwrap().work_suspended(), false);
 }
