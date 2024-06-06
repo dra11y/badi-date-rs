@@ -14,15 +14,18 @@ pub trait BadiDateLike: Clone {
     /// The day of the current year (starting with 1 on Naw-Rúz)
     fn day_of_year(&self) -> u16;
 
-    /// Returns new [`BadiDateLike`] with a different year (checks input for validity)
+    /// Returns new [`BadiDateLike`] with the given `year` (checks input for validity)
     fn with_year(&self, year: u8) -> Result<Self, BadiDateError>;
 
-    /// Returns new [`BadiDateLike`] with a different month (checks input for validity)
+    /// Returns new [`BadiDateLike`] with the given `month` (checks input for validity)
     fn with_month(&self, month: BadiMonth) -> Result<Self, BadiDateError>;
 
-    /// Returns new [`BadiDateLike`] with a different day (checks input for validity)
+    /// Returns new [`BadiDateLike`] with the given `day` (checks input for validity)
     fn with_day(&self, day: u16) -> Result<Self, BadiDateError>;
 
-    /// Returns new [`BadiDateLike`] with a different year, month, and day (checks input for validity)
+    /// Returns new [`BadiDateLike`] with the given `year`, `month`, and `day` (checks input for validity)
     fn with_ymd(&self, year: u8, month: BadiMonth, day: u16) -> Result<Self, BadiDateError>;
+
+    /// Returns new [`BadiDateLike`] with the given `year` and **1-based** `day_of_year` (checks input for validity)
+    fn with_year_and_doy(&self, year: u8, day_of_year: u16) -> Result<Self, BadiDateError>;
 }

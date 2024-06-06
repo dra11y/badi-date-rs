@@ -117,6 +117,27 @@ pub(crate) fn get_last_sunset(
     sunset
 }
 
+pub(crate) fn month_and_day_from_doy_1(
+    year: u8,
+    doy_1: u16,
+) -> Result<(BadiMonth, u16), BadiDateError> {
+    if year < 1 || year > LAST_YEAR_SUPPORTED {
+        return Err(BadiDateError::DateNotSupported);
+    }
+    let ayyamiha_days = get_number_of_ayyamiha_days(year);
+    let doy_0 = doy_1 - 1;
+    if doy_1 < AYYAMIHA_DAY_1 {
+        let month = (doy_0 / 19 + 1) as u8;
+        let day = (doy_0 % 19 + 1) as u16;
+        Ok((BadiMonth::Month(month), day))
+    } else if doy_1 < AYYAMIHA_DAY_1 + ayyamiha_days {
+        Ok((BadiMonth::AyyamIHa, (doy_1 - AYYAMIHA_DAY_0) as u16))
+    } else {
+        let day: u16 = (doy_1 - (AYYAMIHA_DAY_1 + ayyamiha_days)) as u16;
+        Ok((BadiMonth::Month(19), day))
+    }
+}
+
 // Computes the absolute 1-based day of the year given Badi year/month/day
 pub(crate) fn day_of_year(year: u8, month: &BadiMonth, day: u16) -> u16 {
     match *month {

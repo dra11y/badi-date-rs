@@ -1,7 +1,7 @@
 use chrono::{DateTime, Datelike};
 use chrono_tz::Tz;
 
-use crate::{statics::*, BadiDateError, BadiMonth, Coordinates, LocalBadiDate};
+use crate::{statics::*, BadiDateError, Coordinates, LocalBadiDate};
 
 use super::util::*;
 
@@ -32,22 +32,12 @@ impl FromDateTime for LocalBadiDate {
         // let next_sunset = get_next_sunset(&coordinates, date);
         let last_naw_ruz = get_sunset_of_last_naw_ruz(&coordinates, date);
         let year = (last_naw_ruz.year() - YEAR_ZERO_IN_GREGORIAN) as u8;
-        let day_of_year_0 = (last_sunset.date_naive() - last_naw_ruz.date_naive()).num_days();
+        let day_of_year_0: u16 =
+            (last_sunset.date_naive() - last_naw_ruz.date_naive()).num_days() as u16;
         let day_of_year_1 = day_of_year_0 + 1;
-        let ayyamiha_days = get_number_of_ayyamiha_days(year) as i64;
-        let (year, month, day) = if day_of_year_1 < AYYAMIHA_DAY_1 {
-            let month = (day_of_year_0 / 19 + 1) as u8;
-            let day = (day_of_year_0 % 19 + 1) as u16;
-            (year, BadiMonth::Month(month), day)
-        } else if day_of_year_1 < AYYAMIHA_DAY_1 + ayyamiha_days {
-            (
-                year,
-                BadiMonth::AyyamIHa,
-                (day_of_year_1 - AYYAMIHA_DAY_0) as u16,
-            )
-        } else {
-            let day: u16 = (day_of_year_1 - (AYYAMIHA_DAY_1 + ayyamiha_days)) as u16;
-            (year, BadiMonth::Month(19), day)
+        let (month, day) = match month_and_day_from_doy_1(year, day_of_year_1) {
+            Ok(result) => result,
+            Err(err) => return Err(err),
         };
         Self::new(year, month, day, date.timezone(), coordinates)
     }

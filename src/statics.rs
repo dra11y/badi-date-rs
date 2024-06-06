@@ -1,27 +1,29 @@
-use std::collections::HashMap;
+use std::collections::{BTreeMap, HashMap};
 
 use chrono::{DateTime, NaiveTime, TimeZone};
 use chrono_tz::{Asia::Tehran, Tz};
 use lazy_static::lazy_static;
+
+use crate::BahaiHolyDay;
 
 pub(crate) const YEAR_ONE_IN_GREGORIAN: i32 = 1844;
 pub(crate) const YEAR_ZERO_IN_GREGORIAN: i32 = YEAR_ONE_IN_GREGORIAN - 1;
 pub(crate) const LAST_YEAR_SUPPORTED: u8 = 221;
 pub(crate) const LAST_GREGORIAN_YEAR_SUPPORTED: i32 =
     YEAR_ONE_IN_GREGORIAN + LAST_YEAR_SUPPORTED as i32;
-pub(crate) const AYYAMIHA_DAY_1: i64 = 342;
-pub(crate) const AYYAMIHA_DAY_0: i64 = AYYAMIHA_DAY_1 - 1;
+pub(crate) const AYYAMIHA_DAY_1: u16 = 342;
+pub(crate) const AYYAMIHA_DAY_0: u16 = AYYAMIHA_DAY_1 - 1;
 
 #[derive(Debug)]
 pub(crate) struct YearSpecifics {
     pub(crate) leapday: bool,
     pub(crate) naw_ruz_on_march_21: bool,
     #[allow(dead_code)]
-    pub(crate) birth_of_bab: u8,
+    pub(crate) birth_of_bab: u16,
 }
 
 impl YearSpecifics {
-    fn new(birth_of_bab: u8, leapday: bool, naw_ruz_on_march_21: bool) -> YearSpecifics {
+    fn new(birth_of_bab: u16, leapday: bool, naw_ruz_on_march_21: bool) -> YearSpecifics {
         YearSpecifics {
             leapday,
             naw_ruz_on_march_21,
@@ -31,6 +33,22 @@ impl YearSpecifics {
 }
 
 lazy_static! {
+    // https://github.com/Soroosh/badi_date/blob/main/lib/bahai_holyday.dart
+    pub(crate) static ref HOLY_DAYS_FALLBACK: BTreeMap<BahaiHolyDay, u16> = {
+        let mut map = BTreeMap::new();
+        map.insert(BahaiHolyDay::NawRuz, 1);
+        map.insert(BahaiHolyDay::Ridvan1st, 32);
+        map.insert(BahaiHolyDay::Ridvan9th, 40);
+        map.insert(BahaiHolyDay::Ridvan12th, 43);
+        map.insert(BahaiHolyDay::DeclarationOfTheBab, 65);
+        map.insert(BahaiHolyDay::AscensionOfBahaullah, 70);
+        map.insert(BahaiHolyDay::MartyrdomOfTheBab, 112);
+        map.insert(BahaiHolyDay::BirthOfTheBab, 214);
+        map.insert(BahaiHolyDay::BirthOfBahaullah, 237);
+        map.insert(BahaiHolyDay::DayOfTheCovenant, 251);
+        map.insert(BahaiHolyDay::AscensionOfAbdulBaha, 253);
+        map
+    };
     pub(crate) static ref START_OF_DAY_FALLBACK: NaiveTime =
         NaiveTime::from_hms_opt(18, 0, 0).unwrap();
     pub(crate) static ref YEAR_SPECIFICS: HashMap<u8, YearSpecifics> = {

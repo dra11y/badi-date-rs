@@ -56,3 +56,6 @@ pub use error::*;
 
 mod badi_date;
 pub use badi_date::*;
+
+mod bahai_holy_day;
+pub use bahai_holy_day::*;

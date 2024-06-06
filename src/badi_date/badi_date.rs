@@ -1,5 +1,5 @@
 use super::util::*;
-use crate::{BadiDateError, BadiDateLike, BadiMonth};
+use crate::{BadiDateError, BadiDateLike, BadiMonth, HolyDayProviding};
 
 /// A structure that holds a date in the Badí‘ (Bahá’í) calendar without time zone or location info
 #[derive(Debug, Clone, PartialEq)]
@@ -58,4 +58,14 @@ impl BadiDateLike for BadiDate {
     fn with_ymd(&self, year: u8, month: BadiMonth, day: u16) -> Result<BadiDate, BadiDateError> {
         Self::new(year, month, day)
     }
+
+    fn with_year_and_doy(&self, year: u8, day_of_year: u16) -> Result<Self, BadiDateError> {
+        let (month, day) = match month_and_day_from_doy_1(year, day_of_year) {
+            Ok(result) => result,
+            Err(err) => return Err(err),
+        };
+        Self::new(year, month, day)
+    }
 }
+
+impl HolyDayProviding for BadiDate {}

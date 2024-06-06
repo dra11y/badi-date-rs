@@ -1,7 +1,9 @@
 use chrono_tz::Tz;
 
 use super::util::*;
-use crate::{BadiDateError, BadiDateLike, BadiMonth, Coordinates, LocalBadiDateLike};
+use crate::{
+    BadiDateError, BadiDateLike, BadiMonth, Coordinates, HolyDayProviding, LocalBadiDateLike,
+};
 
 /// A structure that holds a date in the Badí‘ (Bahá’í) calendar with associated time zone and optional coordinates
 #[derive(Debug, Clone, PartialEq)]
@@ -76,6 +78,14 @@ impl BadiDateLike for LocalBadiDate {
     fn with_year(&self, year: u8) -> Result<LocalBadiDate, BadiDateError> {
         Self::new(year, self.month, self.day, self.timezone, self.coordinates)
     }
+
+    fn with_year_and_doy(&self, year: u8, day_of_year: u16) -> Result<Self, BadiDateError> {
+        let (month, day) = match month_and_day_from_doy_1(year, day_of_year) {
+            Ok(result) => result,
+            Err(err) => return Err(err),
+        };
+        Self::new(year, month, day, self.timezone, self.coordinates)
+    }
 }
 
 impl LocalBadiDateLike for LocalBadiDate {
@@ -87,3 +97,5 @@ impl LocalBadiDateLike for LocalBadiDate {
         self.coordinates
     }
 }
+
+impl HolyDayProviding for LocalBadiDate {}

@@ -4,26 +4,15 @@ A Rust crate that provides types and conversions between the Gregorian and Badi 
 
 ## CHANGELOG
 
-- [ ] TODO: Add CHANGELOG.md file
+### See CHANGELOG.md for breaking changes 0.1 -> 0.2.
+
+### Latest: 0.2.1
+- Add holy day support:
+  - `BahaiHolyDay` enum
+  - `HolyDayProviding` trait
+    - next, previous, current holy day info for `BadiDateLike`
 
 This crate is a work-in-progress and its API is likely to change! It seems to be working correctly with initial tests. Edge cases have not been tested yet.
-
-- 0.2.0
-  - BREAKING CHANGES:
-    - BadiDate renamed to LocalBadiDate; BadiDate is now without timezone/coordinates
-    - parameters order: LocalBadiDate::new(year, month, day, timezone, coordinates) to be consistent with other date/time libraries (ymd)
-    - parameter types (day: u16, year: u8) - to help avoid mixing up order of variables
-    - LocalBadiDate timezone no longer optional
-    - rename `LocalBadiDate::from_local` to `LocalBadiDate::from_datetime`
-  - BadiDate is now "generic" without timezone/coordinates
-  - rename `ToGregorian` and `FromLocal` traits to `ToDateTime` and `FromDateTime`
-  - fix documentation so it shows up in docs.rs
-
-- 0.1.0 (initial release)
-  - `BadiDate` and `BadiMonth` types
-  - Creation of `BadiDate`s via `BadiDate::new`
-  - Conversion from local Gregorian to `BadiDate` via `BadiDate::from_local`
-  - Conversion from `BadiDate` to local Gregorian via `BadiDate::start()`, `::midnight()`, and `::end()`
 
 ## Installation
 
@@ -46,7 +35,10 @@ cargo add now@0.1
 
 `main.rs`
 ```rust
-use badi_date::{BadiDate, BadiMonth, Coordinates, FromDateTime, ToDateTime};
+use badi_date::{
+    BadiDate, BadiMonth, BahaiHolyDay, Coordinates, FromDateTime, HolyDayProviding, LocalBadiDate,
+    ToDateTime,
+};
 use chrono::TimeZone;
 use chrono_tz::Tz;
 use now::TimeZoneNow;
@@ -85,6 +77,26 @@ fn main() {
         badi_fallback,
     );
     println!("date: {:?}\nbadi_fallback: {:?}", date, badi_fallback);
+
+    // Declaration of the Báb
+    let declaration = BadiDate::new(181, BadiMonth::Month(4), 8).unwrap();
+    assert_eq!(
+        declaration.holy_day(),
+        Some(BahaiHolyDay::DeclarationOfTheBab),
+    );
+    assert_eq!(declaration.holy_day().unwrap().work_suspended(), true);
+
+    let naw_ruz = BadiDate::new(182, BadiMonth::Month(1), 1).unwrap();
+    let ascension = naw_ruz.previous_holy_day().unwrap();
+    assert_eq!(
+        ascension,
+        BadiDate::new(181, BadiMonth::Month(14), 6).unwrap()
+    );
+    assert_eq!(
+        ascension.holy_day(),
+        Some(BahaiHolyDay::AscensionOfAbdulBaha),
+    );
+    assert_eq!(ascension.holy_day().unwrap().work_suspended(), false);
 }
 ```
 
