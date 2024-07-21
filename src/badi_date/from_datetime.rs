@@ -27,13 +27,14 @@ impl FromDateTime for LocalBadiDate {
             return Err(BadiDateError::DateNotSupported);
         }
         let last_sunset = get_last_sunset(&coordinates, date);
+        println!("last_sunset = {}", last_sunset);
         // let next_sunset = get_next_sunset(&coordinates, date);
         let last_naw_ruz = get_sunset_of_last_naw_ruz(&coordinates, date);
         let year = (last_naw_ruz.year() - YEAR_ZERO_IN_GREGORIAN) as u8;
-        let day_of_year_0: u16 =
-            (last_sunset.date_naive() - last_naw_ruz.date_naive()).num_days() as u16;
-        let day_of_year_1 = day_of_year_0 + 1;
-        let (month, day) = match month_and_day_from_doy_1(year, day_of_year_1) {
+        let day_of_year: u16 =
+            1 + (last_sunset.date_naive() - last_naw_ruz.date_naive()).num_days() as u16;
+        println!("day_of_year: {}", day_of_year);
+        let (month, day) = match month_and_day_from_doy(year, day_of_year) {
             Ok(result) => result,
             Err(err) => return Err(err),
         };
@@ -123,6 +124,26 @@ mod tests {
                 denver.with_ymd_and_hms(2024, 6, 3, 20, 30, 0).unwrap(),
                 LocalBadiDate::new(181, BadiMonth::Month(5), 1, denver, coords).unwrap(),
             ),
+            (
+                "Mulk day 19 2025".to_string(),
+                denver.with_ymd_and_hms(2025, 2, 24, 16, 30, 0).unwrap(),
+                LocalBadiDate::new(181, BadiMonth::Month(18), 19, denver, coords).unwrap(),
+            ),
+            (
+                "Ayyám-i-Há day 1 2025".to_string(),
+                denver.with_ymd_and_hms(2025, 2, 24, 18, 30, 0).unwrap(),
+                LocalBadiDate::new(181, BadiMonth::AyyamIHa, 1, denver, coords).unwrap(),
+            ),
+            (
+                "Ayyám-i-Há day 4 2025".to_string(),
+                denver.with_ymd_and_hms(2025, 2, 28, 16, 30, 0).unwrap(),
+                LocalBadiDate::new(181, BadiMonth::AyyamIHa, 4, denver, coords).unwrap(),
+            ),
+            (
+                "Alá day 1 2025".to_string(),
+                denver.with_ymd_and_hms(2025, 2, 28, 18, 30, 0).unwrap(),
+                LocalBadiDate::new(181, BadiMonth::Month(19), 1, denver, coords).unwrap(),
+            ),
         ];
 
         for (description, date, expected_badi) in test_dates {
@@ -131,6 +152,12 @@ mod tests {
                 description, date
             );
             let badi_date = LocalBadiDate::from_datetime(date, coords).unwrap();
+            println!("date = {}", date);
+            println!("badi_date = {}", badi_date);
+            println!(
+                "serde = {}",
+                serde_json::to_string_pretty(&badi_date).unwrap()
+            );
             assert_eq!(badi_date, expected_badi, "{}", description);
             println!(
                 "date: {}, start: {}, end: {}",

@@ -1,16 +1,20 @@
+use std::fmt;
+
 use super::util::*;
 use crate::{
     BadiDateError, BadiDateLike, BadiMonth, Coordinates, HolyDayProviding, LocalBadiDateLike,
     ToDateTime,
 };
-use chrono_tz::Tz;
+use chrono_tz::{OffsetName, Tz};
+use serde::{Deserialize, Serialize};
 
 /// A structure that holds a date in the Badí‘ (Bahá’í) calendar with associated time zone and optional coordinates
-#[derive(Debug, Clone)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct LocalBadiDate {
     year: u8,
     month: BadiMonth,
     day: u16,
+    #[serde(skip)]
     day_of_year: u16,
     timezone: Tz,
     coordinates: Option<Coordinates>,
@@ -39,6 +43,26 @@ impl Ord for LocalBadiDate {
 impl PartialOrd for LocalBadiDate {
     fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
         Some(self.cmp(other))
+    }
+}
+
+impl fmt::Display for LocalBadiDate {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
+            "{:0>3}-{:0>2}-{:0>2} {}{}",
+            self.year,
+            match self.month {
+                BadiMonth::Month(month) => month,
+                BadiMonth::AyyamIHa => 0,
+            },
+            self.day,
+            match self.coordinates {
+                Some(coords) => format!("{} ", coords),
+                None => String::default(),
+            },
+            self.start().offset().abbreviation(),
+        )
     }
 }
 
@@ -104,7 +128,7 @@ impl BadiDateLike for LocalBadiDate {
     }
 
     fn with_year_and_doy(&self, year: u8, day_of_year: u16) -> Result<Self, BadiDateError> {
-        let (month, day) = match month_and_day_from_doy_1(year, day_of_year) {
+        let (month, day) = match month_and_day_from_doy(year, day_of_year) {
             Ok(result) => result,
             Err(err) => return Err(err),
         };

@@ -115,23 +115,24 @@ pub(crate) fn get_last_sunset(
     sunset
 }
 
-pub(crate) fn month_and_day_from_doy_1(
+pub(crate) fn month_and_day_from_doy(
     year: u8,
-    doy_1: u16,
+    doy: u16,
 ) -> Result<(BadiMonth, u16), BadiDateError> {
     if !(1..=LAST_YEAR_SUPPORTED).contains(&year) {
         return Err(BadiDateError::DateNotSupported);
     }
     let ayyamiha_days = get_number_of_ayyamiha_days(year);
-    let doy_0 = doy_1 - 1;
-    if doy_1 < AYYAMIHA_DAY_1 {
+    println!("DOY = {}", doy);
+    let doy_0 = doy - 1;
+    if doy < AYYAMIHA_DAY_1 {
         let month = (doy_0 / 19 + 1) as u8;
         let day = doy_0 % 19 + 1;
         Ok((BadiMonth::Month(month), day))
-    } else if doy_1 < AYYAMIHA_DAY_1 + ayyamiha_days {
-        Ok((BadiMonth::AyyamIHa, doy_1 - AYYAMIHA_DAY_0))
+    } else if doy < AYYAMIHA_DAY_1 + ayyamiha_days {
+        Ok((BadiMonth::AyyamIHa, doy - AYYAMIHA_DAY_0))
     } else {
-        let day: u16 = doy_1 - (AYYAMIHA_DAY_1 + ayyamiha_days);
+        let day: u16 = doy - (AYYAMIHA_DAY_0 + ayyamiha_days);
         Ok((BadiMonth::Month(19), day))
     }
 }
@@ -139,14 +140,13 @@ pub(crate) fn month_and_day_from_doy_1(
 // Computes the absolute 1-based day of the year given Badi year/month/day
 pub(crate) fn day_of_year(year: u8, month: &BadiMonth, day: u16) -> u16 {
     match *month {
-        BadiMonth::Month(month) => {
-            if month < 19 {
-                19 * (month - 1) as u16 + day
-            } else {
+        BadiMonth::Month(month) => match month.cmp(&19) {
+            std::cmp::Ordering::Less => 19 * (month - 1) as u16 + day,
+            _ => {
                 let ayyamiha_days = get_number_of_ayyamiha_days(year);
-                AYYAMIHA_DAY_1 + ayyamiha_days + day
+                AYYAMIHA_DAY_0 + ayyamiha_days + day
             }
-        }
-        BadiMonth::AyyamIHa => AYYAMIHA_DAY_1 + day,
+        },
+        BadiMonth::AyyamIHa => AYYAMIHA_DAY_0 + day,
     }
 }

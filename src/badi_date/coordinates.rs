@@ -1,5 +1,9 @@
+use std::fmt;
+
+use serde::{Deserialize, Serialize};
+
 /// WGS-84 GPS coordinates used to calculate sunset times for a [`LocalBadiDate`][`crate::LocalBadiDate`]
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, Deserialize, PartialEq, Serialize)]
 pub struct Coordinates {
     /// The latitude [-90...90.] in the WGS-84 coordinate system
     pub latitude: f64,
@@ -8,12 +12,18 @@ pub struct Coordinates {
 }
 
 /// Error returned for invalid [`Coordinates`]
-#[derive(Debug)]
+#[derive(Debug, Deserialize, Serialize)]
 pub enum CoordinatesError {
     /// The latitude is not within -90...90. inclusive
     LatitudeInvalid,
     /// The longitude is not within -180...180. inclusive
     LongitudeInvalid,
+}
+
+impl fmt::Display for Coordinates {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{:0>11.6},{:0>11.6}", self.longitude, self.latitude)
+    }
 }
 
 impl CoordinatesError {

@@ -1,10 +1,11 @@
 use rust_i18n::t;
+use serde::{Deserialize, Serialize};
 
 use crate::BadiDateError;
 
 use super::util::*;
 
-#[derive(Debug, Clone, Copy, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Deserialize, Eq, PartialEq, Serialize)]
 /// Represents one of the 19 Bahá’í months or Ayyám-i-Há
 pub enum BadiMonth {
     /// One of the 19 Badi/Bahá’í months (parameter is 1-based month number)

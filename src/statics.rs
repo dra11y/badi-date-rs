@@ -11,7 +11,7 @@ pub(crate) const YEAR_ZERO_IN_GREGORIAN: i32 = YEAR_ONE_IN_GREGORIAN - 1;
 pub(crate) const LAST_YEAR_SUPPORTED: u8 = 221;
 pub(crate) const LAST_GREGORIAN_YEAR_SUPPORTED: i32 =
     YEAR_ONE_IN_GREGORIAN + LAST_YEAR_SUPPORTED as i32;
-pub(crate) const AYYAMIHA_DAY_1: u16 = 342;
+pub(crate) const AYYAMIHA_DAY_1: u16 = 343;
 pub(crate) const AYYAMIHA_DAY_0: u16 = AYYAMIHA_DAY_1 - 1;
 
 #[derive(Debug)]

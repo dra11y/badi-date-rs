@@ -23,8 +23,8 @@
 //! let date = denver.with_ymd_and_hms(2024, 3, 19, 18, 0, 0).unwrap();
 //! let badi_date = LocalBadiDate::from_datetime(date, coords).unwrap();
 //! assert_eq!(
-//!     LocalBadiDate::new(180, BadiMonth::Month(19), 19, denver, coords).unwrap(),
 //!     badi_date,
+//!     LocalBadiDate::new(180, BadiMonth::Month(19), 19, denver, coords).unwrap(),
 //! );
 //! ```
 //!

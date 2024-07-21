@@ -1,5 +1,9 @@
 # badi-date CHANGELOG
 
+## 0.2.5
+- FIX: corrected the incorrect calculations around/during Ayyám-i-Há
+- ADD: impl std::fmt::Display and serde::Serialize/Deserialize
+
 ## 0.2.4
 - minor clippy linter fixes for Rust best practices
 

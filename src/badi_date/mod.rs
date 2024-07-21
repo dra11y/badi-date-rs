@@ -20,6 +20,7 @@ mod badi_date_ops;
 pub use badi_date_ops::*;
 
 mod to_datetime;
+use serde::{Deserialize, Serialize};
 pub use to_datetime::*;
 
 mod util;
@@ -27,12 +28,15 @@ mod util;
 use crate::{BadiDateError, HolyDayProviding};
 use util::*;
 
+use std::fmt;
+
 /// A structure that holds a date in the Badí‘ (Bahá’í) calendar without time zone or location info
-#[derive(Debug, Clone, Eq, Ord, PartialOrd, PartialEq)]
+#[derive(Clone, Debug, Deserialize, Eq, Ord, PartialOrd, PartialEq, Serialize)]
 pub struct BadiDate {
     year: u8,
     month: BadiMonth,
     day: u16,
+    #[serde(skip)]
     day_of_year: u16,
 }
 
@@ -84,7 +88,7 @@ impl BadiDateLike for BadiDate {
     }
 
     fn with_year_and_doy(&self, year: u8, day_of_year: u16) -> Result<Self, BadiDateError> {
-        let (month, day) = match month_and_day_from_doy_1(year, day_of_year) {
+        let (month, day) = match month_and_day_from_doy(year, day_of_year) {
             Ok(result) => result,
             Err(err) => return Err(err),
         };
@@ -93,3 +97,18 @@ impl BadiDateLike for BadiDate {
 }
 
 impl HolyDayProviding for BadiDate {}
+
+impl fmt::Display for BadiDate {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
+            "{:0>3}-{:0>2}-{:0>2}",
+            self.year,
+            match self.month {
+                BadiMonth::Month(month) => month,
+                BadiMonth::AyyamIHa => 0,
+            },
+            self.day,
+        )
+    }
+}
