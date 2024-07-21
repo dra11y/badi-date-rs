@@ -1,5 +1,8 @@
 # badi-date CHANGELOG
 
+## 0.2.4
+- minor clippy linter fixes for Rust best practices
+
 ## 0.2.3
 - update CHANGELOG
 

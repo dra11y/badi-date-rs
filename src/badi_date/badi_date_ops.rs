@@ -1,20 +1,15 @@
 use crate::{BadiDateLike, BadiMonth};
 
 /// Determines resulting day in a returned [`BadiDateLike`][`crate::BadiDateLike`] copy when adding/subtracting [`BadiMonth`]s
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub enum DayChangeAction {
     /// Take the minimum of `self.day` and number of days in **resulting** [`BadiMonth`]
+    #[default]
     Keep,
     /// Change to first day of the **resulting** [`BadiMonth`]
     FirstInMonth,
     /// Change to last day of the **resulting** [`BadiMonth`]
     LastInMonth,
-}
-
-impl Default for DayChangeAction {
-    fn default() -> Self {
-        DayChangeAction::Keep
-    }
 }
 
 /// Provides methods to return a modified copy of a [`BadiDateLike`]
@@ -109,17 +104,15 @@ where
                     month = BadiMonth::first();
                     year += 1;
                 }
-            } else {
-                if let Some(m) = month.previous() {
-                    if skip_ayyamiha && m == BadiMonth::AyyamIHa {
-                        month = m.previous().unwrap();
-                    } else {
-                        month = m;
-                    }
+            } else if let Some(m) = month.previous() {
+                if skip_ayyamiha && m == BadiMonth::AyyamIHa {
+                    month = m.previous().unwrap();
                 } else {
-                    month = BadiMonth::last();
-                    year -= 1;
+                    month = m;
                 }
+            } else {
+                month = BadiMonth::last();
+                year -= 1;
             }
             match day_change_action {
                 DayChangeAction::Keep => day = day.min(month.number_of_days(year)),
@@ -127,7 +120,7 @@ where
                 DayChangeAction::LastInMonth => day = month.number_of_days(year),
             };
         }
-        Self::with_ymd(&self, year, month, day).unwrap()
+        Self::with_ymd(self, year, month, day).unwrap()
     }
 
     fn add_days(&self, days: i32) -> Self {

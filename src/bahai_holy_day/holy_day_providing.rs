@@ -20,8 +20,7 @@ pub trait HolyDayProviding: BadiDateLike {
             println!("next_holy_day: year = {}", year);
             if let Some((day_of_year, _holy_day)) = BahaiHolyDay::holy_days_for_year(year)
                 .into_iter()
-                .filter(|(day_of_year, _)| *day_of_year > after_day)
-                .next()
+                .find(|(day_of_year, _)| *day_of_year > after_day)
             {
                 println!(
                     "next_holy_day: day_of_year, _holy_day = {}, {:?}",
@@ -72,7 +71,7 @@ mod tests {
             next_holy_day.holy_day(),
             Some(BahaiHolyDay::MartyrdomOfTheBab)
         );
-        assert_eq!(next_holy_day.holy_day().unwrap().work_suspended(), true);
+        assert!(next_holy_day.holy_day().unwrap().work_suspended());
         let next_holy_day: BadiDate = next_holy_day.next_holy_day().unwrap();
         assert_eq!(
             next_holy_day,
@@ -134,9 +133,6 @@ mod tests {
             previous_holy_day.holy_day(),
             Some(BahaiHolyDay::AscensionOfAbdulBaha),
         );
-        assert_eq!(
-            previous_holy_day.holy_day().unwrap().work_suspended(),
-            false,
-        );
+        assert!(!previous_holy_day.holy_day().unwrap().work_suspended(),);
     }
 }

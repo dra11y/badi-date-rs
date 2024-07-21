@@ -6,12 +6,10 @@ use crate::{statics::*, BadiDateError, BadiMonth, Coordinates};
 
 /// Validate a Badi year, month, and day
 pub(crate) fn validate(year: u8, month: BadiMonth, day: u16) -> Result<(), BadiDateError> {
-    if year < 1 || year > LAST_YEAR_SUPPORTED {
+    if !(1..=LAST_YEAR_SUPPORTED).contains(&year) {
         return Err(BadiDateError::DateNotSupported);
     }
-    if let Err(err) = month.validate() {
-        return Err(err);
-    }
+    month.validate()?;
     let max_day = month.number_of_days(year);
     if day < 1 || day > max_day {
         let err = BadiDateError::DayInvalid(month, day, max_day);
@@ -42,11 +40,11 @@ pub(crate) fn get_sunset_of_last_naw_ruz(
         .with_day(day)
         .unwrap()
         .beginning_of_day();
-    let naw_ruz_sunset = get_last_sunset(&coordinates, naw_ruz_date);
+    let naw_ruz_sunset = get_last_sunset(coordinates, naw_ruz_date);
     if naw_ruz_sunset <= date {
         naw_ruz_sunset
     } else {
-        get_sunset_of_last_naw_ruz(&coordinates, naw_ruz_date - Days::new(364))
+        get_sunset_of_last_naw_ruz(coordinates, naw_ruz_date - Days::new(364))
     }
 }
 
@@ -81,7 +79,7 @@ pub(crate) fn get_sunset(coordinates: &Option<Coordinates>, date: DateTime<Tz>) 
         latitude,
         longitude,
     } = coordinates;
-    if latitude > 66. || latitude < -66. {
+    if !(-66. ..=66.).contains(&latitude) {
         return fallback;
     }
     let (_, sunset_timestamp) =
@@ -121,19 +119,19 @@ pub(crate) fn month_and_day_from_doy_1(
     year: u8,
     doy_1: u16,
 ) -> Result<(BadiMonth, u16), BadiDateError> {
-    if year < 1 || year > LAST_YEAR_SUPPORTED {
+    if !(1..=LAST_YEAR_SUPPORTED).contains(&year) {
         return Err(BadiDateError::DateNotSupported);
     }
     let ayyamiha_days = get_number_of_ayyamiha_days(year);
     let doy_0 = doy_1 - 1;
     if doy_1 < AYYAMIHA_DAY_1 {
         let month = (doy_0 / 19 + 1) as u8;
-        let day = (doy_0 % 19 + 1) as u16;
+        let day = doy_0 % 19 + 1;
         Ok((BadiMonth::Month(month), day))
     } else if doy_1 < AYYAMIHA_DAY_1 + ayyamiha_days {
-        Ok((BadiMonth::AyyamIHa, (doy_1 - AYYAMIHA_DAY_0) as u16))
+        Ok((BadiMonth::AyyamIHa, doy_1 - AYYAMIHA_DAY_0))
     } else {
-        let day: u16 = (doy_1 - (AYYAMIHA_DAY_1 + ayyamiha_days)) as u16;
+        let day: u16 = doy_1 - (AYYAMIHA_DAY_1 + ayyamiha_days);
         Ok((BadiMonth::Month(19), day))
     }
 }
@@ -143,12 +141,12 @@ pub(crate) fn day_of_year(year: u8, month: &BadiMonth, day: u16) -> u16 {
     match *month {
         BadiMonth::Month(month) => {
             if month < 19 {
-                19 * (month - 1) as u16 + day as u16
+                19 * (month - 1) as u16 + day
             } else {
                 let ayyamiha_days = get_number_of_ayyamiha_days(year);
-                AYYAMIHA_DAY_1 as u16 + ayyamiha_days as u16 + day as u16
+                AYYAMIHA_DAY_1 + ayyamiha_days + day
             }
         }
-        BadiMonth::AyyamIHa => AYYAMIHA_DAY_1 as u16 + day as u16,
+        BadiMonth::AyyamIHa => AYYAMIHA_DAY_1 + day,
     }
 }

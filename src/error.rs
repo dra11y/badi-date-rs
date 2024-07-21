@@ -5,11 +5,11 @@ use crate::{BadiMonth, LAST_YEAR_SUPPORTED};
 /// Error returned from trying to construct a [`BadiDateLike`][`crate::BadiDateLike`] with invalid parameters
 #[derive(Debug)]
 pub enum BadiDateError {
-    ///! The day number passed in for a given [`BadiMonth`] is invalid for that month
+    /// The day number passed in for a given [`BadiMonth`] is invalid for that month
     DayInvalid(BadiMonth, u16, u16),
-    ///! The [`BadiMonth`] itself is invalid (due to an invalid day number)
+    /// The [`BadiMonth`] itself is invalid (due to an invalid day number)
     MonthInvalid(BadiMonth),
-    ///! The date passed in is not in the supported range
+    /// The date passed in is not in the supported range
     DateNotSupported,
 }
 

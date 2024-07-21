@@ -30,15 +30,15 @@ impl PartialEq for LocalBadiDate {
 
 impl Ord for LocalBadiDate {
     fn cmp(&self, other: &Self) -> std::cmp::Ordering {
-        self.partial_cmp(&other).unwrap()
+        let self_start = self.start().timestamp();
+        let other_start = other.start().timestamp();
+        self_start.cmp(&other_start)
     }
 }
 
 impl PartialOrd for LocalBadiDate {
     fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
-        let self_start = self.start().timestamp();
-        let other_start = other.start().timestamp();
-        self_start.partial_cmp(&other_start)
+        Some(self.cmp(other))
     }
 }
 
@@ -52,9 +52,7 @@ impl LocalBadiDate {
         timezone: Tz,
         coordinates: Option<Coordinates>,
     ) -> Result<Self, BadiDateError> {
-        if let Err(err) = validate(year, month, day) {
-            return Err(err);
-        }
+        validate(year, month, day)?;
         let day_of_year = day_of_year(year, &month, day);
         Ok(Self {
             year,

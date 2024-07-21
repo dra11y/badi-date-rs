@@ -23,9 +23,7 @@ impl FromDateTime for LocalBadiDate {
         date: DateTime<Tz>,
         coordinates: Option<Coordinates>,
     ) -> Result<Self, BadiDateError> {
-        if date < FIRST_GREGORIAN_DATE_SUPPORTED.clone()
-            || date > LAST_GREGORIAN_DATE_SUPPORTED.clone()
-        {
+        if date < *FIRST_GREGORIAN_DATE_SUPPORTED || date > *LAST_GREGORIAN_DATE_SUPPORTED {
             return Err(BadiDateError::DateNotSupported);
         }
         let last_sunset = get_last_sunset(&coordinates, date);

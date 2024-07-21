@@ -4,7 +4,7 @@ use crate::BadiDateError;
 
 use super::util::*;
 
-#[derive(Debug, Clone, Copy, Eq, Ord, PartialEq)]
+#[derive(Debug, Clone, Copy, Eq, PartialEq)]
 /// Represents one of the 19 Bahá’í months or Ayyám-i-Há
 pub enum BadiMonth {
     /// One of the 19 Badi/Bahá’í months (parameter is 1-based month number)
@@ -13,30 +13,36 @@ pub enum BadiMonth {
     AyyamIHa,
 }
 
-impl PartialOrd for BadiMonth {
-    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+impl Ord for BadiMonth {
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
         match self {
             BadiMonth::Month(sm) => match other {
-                BadiMonth::Month(om) => sm.partial_cmp(om),
+                BadiMonth::Month(om) => sm.cmp(om),
                 BadiMonth::AyyamIHa => {
                     if *sm == 19 {
-                        Some(std::cmp::Ordering::Greater)
+                        std::cmp::Ordering::Greater
                     } else {
-                        Some(std::cmp::Ordering::Less)
+                        std::cmp::Ordering::Less
                     }
                 }
             },
             BadiMonth::AyyamIHa => match other {
                 BadiMonth::Month(om) => {
                     if *om == 19 {
-                        Some(std::cmp::Ordering::Less)
+                        std::cmp::Ordering::Less
                     } else {
-                        Some(std::cmp::Ordering::Greater)
+                        std::cmp::Ordering::Greater
                     }
                 }
-                BadiMonth::AyyamIHa => Some(std::cmp::Ordering::Equal),
+                BadiMonth::AyyamIHa => std::cmp::Ordering::Equal,
             },
         }
+    }
+}
+
+impl PartialOrd for BadiMonth {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        Some(self.cmp(other))
     }
 }
 
@@ -54,15 +60,11 @@ impl BadiMonth {
     /// Next month of the year (None if `self` is ʻAláʼ)
     pub fn next(&self) -> Option<Self> {
         match *self {
-            BadiMonth::Month(month) => {
-                if month < 18 {
-                    Some(BadiMonth::Month(month + 1))
-                } else if month == 18 {
-                    Some(BadiMonth::AyyamIHa)
-                } else {
-                    None
-                }
-            }
+            BadiMonth::Month(month) => match month.cmp(&18) {
+                std::cmp::Ordering::Less => Some(BadiMonth::Month(month + 1)),
+                std::cmp::Ordering::Equal => Some(BadiMonth::AyyamIHa),
+                std::cmp::Ordering::Greater => None,
+            },
             BadiMonth::AyyamIHa => Some(BadiMonth::Month(19)),
         }
     }
@@ -88,7 +90,7 @@ impl BadiMonth {
     /// Return `self` if month is valid, otherwise [`BadiDateError::MonthInvalid`]
     pub fn validate(&self) -> Result<Self, BadiDateError> {
         if match *self {
-            BadiMonth::Month(month) => month >= 1 && month <= 19,
+            BadiMonth::Month(month) => (1..=19).contains(&month),
             BadiMonth::AyyamIHa => true,
         } {
             return Ok(*self);
