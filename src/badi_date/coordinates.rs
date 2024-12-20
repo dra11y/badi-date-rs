@@ -12,7 +12,7 @@ pub struct Coordinates {
 }
 
 /// Error returned for invalid [`Coordinates`]
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Clone, Copy, Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub enum CoordinatesError {
     /// The latitude is not within -90...90. inclusive
     LatitudeInvalid,

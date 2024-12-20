@@ -1,6 +1,6 @@
 [package]
 name = "badi-date"
-version = "0.2.5"
+version = "0.2.6"
 edition = "2021"
 authors = ["Tom Grushka"]
 description = "Provides dates for the Badí' (Bahá’í) calendar and conversions between Badí' and Gregorian dates."
@@ -12,7 +12,7 @@ categories = ["date-and-time", "internationalization", "localization"]
 
 [dependencies]
 chrono = { version = "0.4", features = ["serde"] }
-chrono-tz = { version = "0.9", features = [
+chrono-tz = { version = "0.10", features = [
     "case-insensitive",
     "filter-by-regex",
     "serde",

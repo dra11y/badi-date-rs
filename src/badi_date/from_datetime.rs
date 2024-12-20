@@ -27,17 +27,12 @@ impl FromDateTime for LocalBadiDate {
             return Err(BadiDateError::DateNotSupported);
         }
         let last_sunset = get_last_sunset(&coordinates, date);
-        println!("last_sunset = {}", last_sunset);
         // let next_sunset = get_next_sunset(&coordinates, date);
         let last_naw_ruz = get_sunset_of_last_naw_ruz(&coordinates, date);
         let year = (last_naw_ruz.year() - YEAR_ZERO_IN_GREGORIAN) as u8;
         let day_of_year: u16 =
             1 + (last_sunset.date_naive() - last_naw_ruz.date_naive()).num_days() as u16;
-        println!("day_of_year: {}", day_of_year);
-        let (month, day) = match month_and_day_from_doy(year, day_of_year) {
-            Ok(result) => result,
-            Err(err) => return Err(err),
-        };
+        let (month, day) = month_and_day_from_doy(year, day_of_year)?;
         Self::new(year, month, day, date.timezone(), coordinates)
     }
 }

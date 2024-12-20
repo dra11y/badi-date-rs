@@ -123,7 +123,6 @@ pub(crate) fn month_and_day_from_doy(
         return Err(BadiDateError::DateNotSupported);
     }
     let ayyamiha_days = get_number_of_ayyamiha_days(year);
-    println!("DOY = {}", doy);
     let doy_0 = doy - 1;
     if doy < AYYAMIHA_DAY_1 {
         let month = (doy_0 / 19 + 1) as u8;

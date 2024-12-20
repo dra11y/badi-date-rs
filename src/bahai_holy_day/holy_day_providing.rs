@@ -17,16 +17,10 @@ pub trait HolyDayProviding: BadiDateLike {
             } else {
                 0
             };
-            println!("next_holy_day: year = {}", year);
             if let Some((day_of_year, _holy_day)) = BahaiHolyDay::holy_days_for_year(year)
                 .into_iter()
                 .find(|(day_of_year, _)| *day_of_year > after_day)
             {
-                println!(
-                    "next_holy_day: day_of_year, _holy_day = {}, {:?}",
-                    day_of_year, _holy_day
-                );
-
                 return self.with_year_and_doy(year, day_of_year);
             }
         }

@@ -1,5 +1,6 @@
 mod holy_day_providing;
 pub use holy_day_providing::*;
+use serde::{Deserialize, Serialize};
 
 use std::collections::BTreeMap;
 
@@ -10,7 +11,7 @@ use crate::{HOLY_DAYS_FALLBACK, YEAR_SPECIFICS};
 /// List of the 11 Bahá’í Holy Days (9 on which work is to be suspended)
 /// See <https://www.bahai.org/action/devotional-life/calendar>
 // Taken from: https://github.com/Soroosh/badi_date/blob/main/lib/bahai_holyday.dart
-#[derive(Debug, Copy, Clone, Eq, Hash, Ord, PartialEq, PartialOrd)]
+#[derive(Debug, Copy, Clone, Eq, Hash, Ord, PartialEq, PartialOrd, Serialize, Deserialize)]
 pub enum BahaiHolyDay {
     /// Naw-Rúz
     NawRuz,

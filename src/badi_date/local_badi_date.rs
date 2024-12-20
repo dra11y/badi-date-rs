@@ -61,7 +61,11 @@ impl fmt::Display for LocalBadiDate {
                 Some(coords) => format!("{} ", coords),
                 None => String::default(),
             },
-            self.start().offset().abbreviation(),
+            self.start()
+                .offset()
+                .abbreviation()
+                .map(String::from)
+                .unwrap_or_else(|| self.start().offset().to_string()),
         )
     }
 }
@@ -128,10 +132,7 @@ impl BadiDateLike for LocalBadiDate {
     }
 
     fn with_year_and_doy(&self, year: u8, day_of_year: u16) -> Result<Self, BadiDateError> {
-        let (month, day) = match month_and_day_from_doy(year, day_of_year) {
-            Ok(result) => result,
-            Err(err) => return Err(err),
-        };
+        let (month, day) = month_and_day_from_doy(year, day_of_year)?;
         Self::new(year, month, day, self.timezone, self.coordinates)
     }
 }

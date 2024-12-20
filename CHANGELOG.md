@@ -1,5 +1,14 @@
 # badi-date CHANGELOG
 
+## 0.2.6
+- FIX: fix some dropped value errors
+- FIX: remove `println!`s
+- FIX: `BadiDateOps::previous_feast()` no longer returns 1 Ayyám-i-Há if `self` during Ayyám-i-Há
+- ADD: `BadiDateLike::is_feast()`
+- ADD: `BadiDateOps::previous_or_current_feast()` and tests/more tests for `previous_feast()`
+- CHORE: bump chrono-tz
+- CHORE: add sensible `#[derive(...`s to enums
+
 ## 0.2.5
 - FIX: corrected the incorrect calculations around/during Ayyám-i-Há
 - ADD: impl std::fmt::Display and serde::Serialize/Deserialize

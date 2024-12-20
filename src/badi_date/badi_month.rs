@@ -136,7 +136,8 @@ impl BadiMonth {
     pub fn name(&self, locale: &str) -> String {
         match self {
             BadiMonth::Month(month) => {
-                t!(format!("month.{}", month).as_str(), locale = locale).to_string()
+                let month_key = format!("month.{month}");
+                t!(&month_key, locale = locale).to_string()
             }
             BadiMonth::AyyamIHa => t!("ayyamiha", locale = locale).to_string(),
         }

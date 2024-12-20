@@ -11,6 +11,11 @@ pub trait BadiDateLike: Clone {
     /// The Badi day [1 - min(19, Ayyám-i-Há days for the year)]
     fn day(&self) -> u16;
 
+    /// Whether the current date is a Feast day
+    fn is_feast(&self) -> bool {
+        self.day() == 1 && self.month() != BadiMonth::AyyamIHa
+    }
+
     /// The day of the current year (starting with 1 on Naw-Rúz)
     fn day_of_year(&self) -> u16;
 
@@ -28,4 +33,21 @@ pub trait BadiDateLike: Clone {
 
     /// Returns new [`BadiDateLike`] with the given `year` and **1-based** `day_of_year` (checks input for validity)
     fn with_year_and_doy(&self, year: u8, day_of_year: u16) -> Result<Self, BadiDateError>;
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::{BadiDate, BadiDateLike, BadiMonth};
+
+    #[test]
+    fn test_is_feast() {
+        let badi = BadiDate::new(181, BadiMonth::Month(19), 2).unwrap();
+        assert!(!badi.is_feast());
+
+        let badi = BadiDate::new(181, BadiMonth::Month(19), 1).unwrap();
+        assert!(badi.is_feast());
+
+        let badi = BadiDate::new(181, BadiMonth::AyyamIHa, 1).unwrap();
+        assert!(!badi.is_feast());
+    }
 }

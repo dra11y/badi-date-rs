@@ -1,7 +1,9 @@
+use serde::{Deserialize, Serialize};
+
 use crate::{BadiDateLike, BadiMonth};
 
 /// Determines resulting day in a returned [`BadiDateLike`][`crate::BadiDateLike`] copy when adding/subtracting [`BadiMonth`]s
-#[derive(Debug, Default)]
+#[derive(Clone, Copy, Debug, Default, Deserialize, Eq, PartialEq, Serialize)]
 pub enum DayChangeAction {
     /// Take the minimum of `self.day` and number of days in **resulting** [`BadiMonth`]
     #[default]
@@ -20,6 +22,10 @@ where
     /// Returns new [`BadiDateLike`] of the next Feast (day 1 of next [`BadiMonth`]; **skips** [`BadiMonth::AyyamIHa`])
     fn next_feast(&self) -> T;
     /// Returns new [`BadiDateLike`] of the previous Feast (day 1 of [`BadiMonth::Month`] -- `self.month` is kept if `self.day` > 1), **skips** [`BadiMonth::AyyamIHa`])
+    /// If `self.day` == 1, returns `self`.
+    fn previous_or_current_feast(&self) -> T;
+    /// Returns new [`BadiDateLike`] of the previous Feast (day 1 of [`BadiMonth::Month`] -- `self.month` is kept if `self.day` > 1), **skips** [`BadiMonth::AyyamIHa`])
+    /// If `self.day` == 1, returns the previous month's Feast.
     fn previous_feast(&self) -> T;
     /// Returns new [`BadiDateLike`] of the next Naw Ruz (day 1 of `BadiMonth::Month(1)` of next `year`)
     fn next_naw_ruz(&self) -> T;
@@ -55,10 +61,18 @@ where
     }
 
     fn previous_feast(&self) -> T {
-        if self.day() == 1 {
+        if self.is_feast() || self.month() == BadiMonth::AyyamIHa {
             self.add_months(-1, DayChangeAction::FirstInMonth, true)
         } else {
             self.with_day(1).unwrap()
+        }
+    }
+
+    fn previous_or_current_feast(&self) -> T {
+        if self.is_feast() {
+            self.clone()
+        } else {
+            self.previous_feast()
         }
     }
 
@@ -180,6 +194,34 @@ where
 #[cfg(test)]
 mod tests {
     use crate::{BadiDate, BadiDateOps, BadiMonth, DayChangeAction};
+    #[test]
+    fn test_previous_and_previous_or_current_feast() {
+        let badi = BadiDate::new(181, BadiMonth::Month(19), 2).unwrap();
+        let badi = badi.previous_feast();
+        assert_eq!(badi, BadiDate::new(181, BadiMonth::Month(19), 1).unwrap());
+        let badi = badi.previous_feast();
+        assert_eq!(badi, BadiDate::new(181, BadiMonth::Month(18), 1).unwrap());
+
+        let badi = BadiDate::new(181, BadiMonth::AyyamIHa, 2).unwrap();
+        assert_eq!(
+            badi.previous_feast(),
+            BadiDate::new(181, BadiMonth::Month(18), 1).unwrap()
+        );
+        assert_eq!(
+            badi.previous_or_current_feast(),
+            BadiDate::new(181, BadiMonth::Month(18), 1).unwrap()
+        );
+
+        let badi = BadiDate::new(181, BadiMonth::Month(18), 1).unwrap();
+        assert_eq!(
+            badi.previous_feast(),
+            BadiDate::new(181, BadiMonth::Month(17), 1).unwrap()
+        );
+        assert_eq!(
+            badi.previous_or_current_feast(),
+            BadiDate::new(181, BadiMonth::Month(18), 1).unwrap()
+        );
+    }
 
     #[test]
     fn add_subtract_next_previous() {
